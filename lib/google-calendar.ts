@@ -113,6 +113,7 @@ export async function readPrimaryCalendarEvents(userId: string) {
   });
 
   const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`, {
+    cache: "no-store",
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

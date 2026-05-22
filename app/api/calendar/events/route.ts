@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentUserId } from "@/lib/current-user";
 import { readPrimaryCalendarEvents } from "@/lib/google-calendar";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const userId = await getCurrentUserId();

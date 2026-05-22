@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import type { RoadmapGoal, RoadmapStep } from "@/types/roadmap";
 
@@ -25,6 +24,7 @@ export default function DeepWorkPage() {
   const [goal, setGoal] = useState<RoadmapGoal | null>(null);
   const [error, setError] = useState("");
   const [completeMessage, setCompleteMessage] = useState("");
+  const [stepMemo, setStepMemo] = useState("");
   const totalSessions = 5;
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -107,7 +107,13 @@ export default function DeepWorkPage() {
 
     try {
       // 기록 완료는 실제 업무 단계 완료 API와 동기화합니다.
-      const response = await fetch(`/api/steps/${currentStep.id}/done`, { method: "PATCH" });
+      const response = await fetch(`/api/steps/${currentStep.id}/done`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ memo: stepMemo }),
+      });
       const data = (await response.json()) as { goal: RoadmapGoal; error?: string };
 
       if (!response.ok) {
@@ -116,6 +122,7 @@ export default function DeepWorkPage() {
 
       setGoal(data.goal);
       setCompleteMessage("업무 기록을 완료했습니다. 회고 메모를 남겨 보세요.");
+      setStepMemo("");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "업무 완료 처리에 실패했습니다.");
     }
@@ -147,8 +154,7 @@ export default function DeepWorkPage() {
       {/* Header */}
       <Header />
 
-      {/* Sidebar */}
-      <Sidebar />
+
 
       {/* Main Content Canvas */}
       <main className="pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-container-max mx-auto w-full min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
@@ -234,6 +240,20 @@ export default function DeepWorkPage() {
               ></div>
             </div>
           </div>
+
+          {/* 간단 회고 메모 입력창 (선택사항) */}
+          {currentStep && (
+            <div className="w-full max-w-md mb-8 flex items-center gap-3 bg-white/40 dark:bg-surface-container-high/40 backdrop-blur-md px-4 py-2.5 rounded-xl border border-outline-variant/30">
+              <span className="material-symbols-outlined text-primary text-lg">rate_review</span>
+              <input
+                type="text"
+                placeholder="완료 시 함께 기록할 간단 회고 메모 (선택사항)"
+                value={stepMemo}
+                onChange={(e) => setStepMemo(e.target.value)}
+                className="bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder-on-surface-variant/80 w-full outline-none"
+              />
+            </div>
+          )}
 
           {/* Action Cluster */}
           <div className="flex flex-wrap items-center justify-center gap-4">

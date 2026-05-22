@@ -4,13 +4,24 @@ import { getCurrentUserId } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { serializeGoal, unlockNextStep } from "@/lib/roadmap";
 
-export async function PATCH(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const userId = await getCurrentUserId();
   if (!userId) {
     return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   }
 
   const { id } = await params;
+
+  let memo: string | null = null;
+  try {
+    const body = await request.json();
+    if (body && typeof body.memo === "string") {
+      memo = body.memo.trim() || null;
+    }
+  } catch {
+    // Body가 없을 때 예외 무시
+  }
+
   const step = await prisma.taskStep.findUnique({
     where: { id },
     include: { childSteps: true, goal: true },
@@ -26,7 +37,7 @@ export async function PATCH(_: Request, { params }: { params: Promise<{ id: stri
 
   const completedStep = await prisma.taskStep.update({
     where: { id },
-    data: { status: TaskStatus.DONE, completedAt: new Date() },
+    data: { status: TaskStatus.DONE, completedAt: new Date(), memo },
   });
 
   await unlockNextStep(completedStep);

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { signIn } from "next-auth/react";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import type { ReflectionSummary, RoadmapGoal } from "@/types/roadmap";
 
@@ -134,7 +133,7 @@ export default function InsightsPage() {
   return (
     <div className="bg-surface text-on-surface min-h-screen">
       <Header />
-      <Sidebar />
+
 
       <main className="pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-3xl mx-auto w-full min-h-screen">
         <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">

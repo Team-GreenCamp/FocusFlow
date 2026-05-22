@@ -39,6 +39,7 @@ export function serializeGoal(goal: {
       estimateMinutes: step.estimateMinutes,
       status: step.status,
       completedAt: step.completedAt?.toISOString() ?? null,
+      memo: step.memo,
     })),
   };
 }

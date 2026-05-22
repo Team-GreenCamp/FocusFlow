@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 
 export default function Home() {
@@ -18,8 +17,7 @@ export default function Home() {
       {/* Header */}
       <Header />
 
-      {/* Sidebar */}
-      <Sidebar />
+
 
       {/* Main Content Canvas */}
       <main className="relative z-10 pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-5xl mx-auto w-full min-h-screen flex flex-col items-center">

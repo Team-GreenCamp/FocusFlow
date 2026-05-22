@@ -37,6 +37,7 @@ model TaskStep {
   estimateMinutes Int
   status          TaskStatus  @default(LOCKED)
   completedAt     DateTime?
+  memo            String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   goal            Goal        @relation(fields: [goalId], references: [id], onDelete: Cascade)

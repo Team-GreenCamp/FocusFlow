@@ -34,6 +34,7 @@ export type RoadmapStep = {
   estimateMinutes: number;
   status: TaskStatus;
   completedAt: string | null;
+  memo: string | null;
 };
 
 export type RoadmapGoal = {

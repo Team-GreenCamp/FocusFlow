@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 
 export default function SettingsPage() {
@@ -60,8 +59,7 @@ export default function SettingsPage() {
       {/* Header */}
       <Header />
 
-      {/* Sidebar */}
-      <Sidebar />
+
 
       {/* Main Content Canvas */}
       <main className="pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-3xl mx-auto w-full min-h-screen">

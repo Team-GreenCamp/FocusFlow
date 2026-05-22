@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import type { RoadmapGoal, RoadmapStep } from "@/types/roadmap";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 
 type Reflection = {
@@ -48,15 +47,35 @@ export default function BreakdownPage() {
   const [loading, setLoading] = useState("");
   const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({});
   const [showCompletedToday, setShowCompletedToday] = useState(false);
+  const [stepMemos, setStepMemos] = useState<Record<string, string>>({});
+  const [isFocused, setIsFocused] = useState(false);
+
+  const placeholders = useMemo(() => [
+    "예: 바디프로필 촬영을 위한 일주일 식단 구성 및 장보기",
+    "예: 하프 마라톤 완주를 위한 단계별 달성 계획 설계",
+    "예: 미니멀 라이프 실천을 위한 안 입는 옷 정리하기",
+    "예: 월 2권 독서 달성을 위한 매일 30분 독서 루틴 짜기",
+    "예: 주말 아침 러닝 및 스트레칭 습관 만들기",
+    "예: 건강한 식생활을 위한 저염식 반찬 밀프렙 준비"
+  ], []);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [placeholders]);
 
   const currentStep = useMemo(() => findCurrentWorkStep(goal), [goal]);
-  const completedToday = useMemo(() => goal?.steps.filter((step) => step.status === "DONE") ?? [], [goal]);
+  const leafSteps = useMemo(() => goal?.steps.filter((step) => isLeaf(step, goal.steps)) ?? [], [goal]);
+  const completedLeafSteps = useMemo(() => leafSteps.filter((step) => step.status === "DONE"), [leafSteps]);
   const rootSteps = useMemo(() => goal?.steps.filter((step) => !step.parentStepId) ?? [], [goal]);
 
   const progressPercent = useMemo(() => {
-    if (!goal || goal.steps.length === 0) return 0;
-    return Math.round((completedToday.length / goal.steps.length) * 100);
-  }, [goal, completedToday]);
+    if (leafSteps.length === 0) return 0;
+    return Math.round((completedLeafSteps.length / leafSteps.length) * 100);
+  }, [leafSteps, completedLeafSteps]);
 
   const toggleStep = (stepId: string) => {
     setExpandedSteps((prev) => ({
@@ -160,8 +179,17 @@ export default function BreakdownPage() {
     setLoading(stepId);
 
     try {
-      const data = await callApi<{ goal: RoadmapGoal }>(`/api/steps/${stepId}/done`, { method: "PATCH" });
+      const memoValue = stepMemos[stepId] || "";
+      const data = await callApi<{ goal: RoadmapGoal }>(`/api/steps/${stepId}/done`, {
+        method: "PATCH",
+        body: JSON.stringify({ memo: memoValue }),
+      });
       setGoal(data.goal);
+      setStepMemos((prev) => {
+        const next = { ...prev };
+        delete next[stepId];
+        return next;
+      });
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "완료 처리에 실패했습니다.");
     } finally {
@@ -212,8 +240,7 @@ export default function BreakdownPage() {
       {/* Header */}
       <Header />
 
-      {/* Sidebar */}
-      <Sidebar />
+
 
       {/* Main Content Canvas */}
       <main className="relative z-10 pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-5xl mx-auto w-full min-h-screen flex flex-col items-center">
@@ -235,11 +262,20 @@ export default function BreakdownPage() {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline" aria-hidden="true">search</span>
               <input
                 className="w-full pl-12 pr-4 h-12 bg-white/60 dark:bg-surface-container-high/60 backdrop-blur-sm border border-outline-variant/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent font-body-medium text-body-medium text-on-surface"
-                placeholder="예: 배틀로얄 게임 DB 설계처럼 아직 막연한 업무"
                 type="text"
                 value={goalInput}
                 onChange={(event) => setGoalInput(event.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
               />
+              {!goalInput && !isFocused && (
+                <div
+                  key={placeholderIndex}
+                  className="absolute left-12 top-1/2 pointer-events-none font-body-medium text-body-medium text-outline/70 animate-placeholder-in truncate pr-4 max-w-[calc(100%-3.5rem)]"
+                >
+                  {placeholders[placeholderIndex]}
+                </div>
+              )}
             </div>
             <button
               disabled={loading === "roadmap"}
@@ -262,7 +298,7 @@ export default function BreakdownPage() {
               <div className="glass-card p-4 rounded-xl">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-semibold text-on-surface">업무 실행 진행률</span>
-                  <span className="text-sm font-bold text-primary">{progressPercent}% ({completedToday.length} / {goal.steps.length} 완료)</span>
+                  <span className="text-sm font-bold text-primary">{progressPercent}% ({completedLeafSteps.length} / {leafSteps.length} 완료)</span>
                 </div>
                 <div className="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
                   <div
@@ -272,7 +308,7 @@ export default function BreakdownPage() {
                 </div>
               </div>
 
-              {completedToday.length > 0 && (
+              {completedLeafSteps.length > 0 && (
                 <div className="glass-card rounded-xl overflow-hidden">
                   <button
                     onClick={() => setShowCompletedToday(!showCompletedToday)}
@@ -280,7 +316,7 @@ export default function BreakdownPage() {
                   >
                     <span className="text-sm font-semibold text-on-surface flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary text-[18px]">check_circle</span>
-                      완료한 구체 업무 ({completedToday.length}개)
+                      완료한 구체 업무 ({completedLeafSteps.length}개)
                     </span>
                     <span className="material-symbols-outlined text-outline">
                       {showCompletedToday ? "expand_less" : "expand_more"}
@@ -288,10 +324,17 @@ export default function BreakdownPage() {
                   </button>
                   {showCompletedToday && (
                     <div className="p-4 pt-0 border-t border-outline-variant/30 space-y-2 bg-surface-container-lowest/50">
-                      {completedToday.map((step) => (
-                        <div key={step.id} className="flex items-center gap-2 p-2 rounded bg-surface-container-low text-sm font-medium text-on-surface">
-                          <span className="material-symbols-outlined text-primary text-[16px]">check_circle</span>
-                          <span className="truncate">{step.title}</span>
+                      {completedLeafSteps.map((step) => (
+                        <div key={step.id} className="flex flex-col gap-1 p-2.5 rounded bg-surface-container-low text-sm font-medium text-on-surface">
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+                            <span className="truncate">{step.title}</span>
+                          </div>
+                          {step.memo && (
+                            <div className="ml-6 text-xs text-primary bg-primary/5 border border-primary/10 rounded px-2 py-0.5 max-w-max">
+                              회고: {step.memo}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -372,24 +415,42 @@ export default function BreakdownPage() {
                         <p className="font-body-md text-body-md text-on-surface-variant">
                           {step.description}
                         </p>
+                        {step.memo && isCompleted && (
+                          <div className="mt-1 flex items-center gap-1.5 text-xs text-primary bg-primary/5 border border-primary/10 rounded-md px-2 py-1 max-w-max font-medium">
+                            <span className="material-symbols-outlined text-[14px]">rate_review</span>
+                            <span>간단 회고: {step.memo}</span>
+                          </div>
+                        )}
 
-                        {/* 현재 실행 가능한 업무에만 액션 버튼을 표시합니다. */}
+                        {/* 현재 실행 가능한 업무에만 액션 버튼 및 입력 폼을 표시합니다. */}
                         {isActive && (
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            <button
-                              onClick={() => completeStep(step.id)}
-                              disabled={!!loading}
-                              className="px-4 py-2 bg-primary text-white rounded-lg font-label-md text-label-md shadow hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 disabled:opacity-50"
-                            >
-                              {loading === step.id ? "처리 중..." : "완료"}
-                            </button>
-                            <button
-                              onClick={() => breakdownStep(step.id)}
-                              disabled={!!loading}
-                              className="px-4 py-2 bg-white border border-outline-variant text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all active:scale-95 disabled:opacity-50"
-                            >
-                              {loading === `breakdown-${step.id}` ? "구체화 중..." : "더 구체화"}
-                            </button>
+                          <div className="flex flex-col gap-2.5 mt-2">
+                            <div className="flex items-center gap-2 max-w-md w-full">
+                              <span className="material-symbols-outlined text-sm text-primary">rate_review</span>
+                              <input
+                                type="text"
+                                className="flex-1 text-xs bg-white/60 dark:bg-surface-container-high/60 backdrop-blur-sm border border-outline-variant/40 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary text-on-surface"
+                                placeholder="간단 회고 메모 적기 (선택사항)"
+                                value={stepMemos[step.id] || ""}
+                                onChange={(e) => setStepMemos(prev => ({ ...prev, [step.id]: e.target.value }))}
+                              />
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                onClick={() => completeStep(step.id)}
+                                disabled={!!loading}
+                                className="px-4 py-2 bg-primary text-white rounded-lg font-label-md text-label-md shadow hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 disabled:opacity-50"
+                              >
+                                {loading === step.id ? "처리 중..." : "완료"}
+                              </button>
+                              <button
+                                onClick={() => breakdownStep(step.id)}
+                                disabled={!!loading}
+                                className="px-4 py-2 bg-white border border-outline-variant text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all active:scale-95 disabled:opacity-50"
+                              >
+                                {loading === `breakdown-${step.id}` ? "구체화 중..." : "더 구체화"}
+                              </button>
+                            </div>
                           </div>
                         )}
 
@@ -428,22 +489,40 @@ export default function BreakdownPage() {
                                   <p className="mt-1 text-sm leading-5 text-on-surface-variant">
                                     {child.description}
                                   </p>
+                                  {child.memo && (
+                                    <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-primary bg-primary/5 border border-primary/10 rounded px-2 py-0.5 max-w-max font-medium">
+                                      <span className="material-symbols-outlined text-[12px]">rate_review</span>
+                                      <span>간단 회고: {child.memo}</span>
+                                    </div>
+                                  )}
                                   {isChildActive && (
-                                    <div className="flex gap-2 mt-2">
-                                      <button
-                                        onClick={() => completeStep(child.id)}
-                                        disabled={!!loading}
-                                        className="px-3 py-1 bg-primary text-white rounded text-xs font-semibold hover:bg-primary-container transition-all active:scale-95 disabled:opacity-50"
-                                      >
-                                        {loading === child.id ? "처리 중..." : "완료"}
-                                      </button>
-                                      <button
-                                        onClick={() => breakdownStep(child.id)}
-                                        disabled={!!loading}
-                                        className="px-3 py-1 bg-white border border-outline-variant text-on-surface rounded text-xs font-semibold hover:bg-surface-container-low transition-all active:scale-95 disabled:opacity-50"
-                                      >
-                                        {loading === `breakdown-${child.id}` ? "구체화 중..." : "더 구체화"}
-                                      </button>
+                                    <div className="flex flex-col gap-2 mt-2">
+                                      <div className="flex items-center gap-2 max-w-sm w-full">
+                                        <span className="material-symbols-outlined text-xs text-primary">rate_review</span>
+                                        <input
+                                          type="text"
+                                          className="flex-1 text-[11px] bg-white/60 dark:bg-surface-container-high/60 backdrop-blur-sm border border-outline-variant/40 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary text-on-surface"
+                                          placeholder="간단 회고 메모 적기 (선택사항)"
+                                          value={stepMemos[child.id] || ""}
+                                          onChange={(e) => setStepMemos(prev => ({ ...prev, [child.id]: e.target.value }))}
+                                        />
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <button
+                                          onClick={() => completeStep(child.id)}
+                                          disabled={!!loading}
+                                          className="px-3 py-1 bg-primary text-white rounded text-xs font-semibold hover:bg-primary-container transition-all active:scale-95 disabled:opacity-50"
+                                        >
+                                          {loading === child.id ? "처리 중..." : "완료"}
+                                        </button>
+                                        <button
+                                          onClick={() => breakdownStep(child.id)}
+                                          disabled={!!loading}
+                                          className="px-3 py-1 bg-white border border-outline-variant text-on-surface rounded text-xs font-semibold hover:bg-surface-container-low transition-all active:scale-95 disabled:opacity-50"
+                                        >
+                                          {loading === `breakdown-${child.id}` ? "구체화 중..." : "더 구체화"}
+                                        </button>
+                                      </div>
                                     </div>
                                   )}
                                 </div>
@@ -478,7 +557,7 @@ export default function BreakdownPage() {
               />
               <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-on-surface-variant font-medium">
-                  현재 피드백 재료: 완료 업무 {completedToday.length}개
+                  현재 피드백 재료: 완료 업무 {completedLeafSteps.length}개
                 </p>
                 <button
                   onClick={createReflection}

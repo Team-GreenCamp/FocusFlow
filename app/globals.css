@@ -99,3 +99,19 @@ textarea {
   background: #c3c5d9;
   border-radius: 10px;
 }
+
+/* Placeholder animation */
+@keyframes placeholder-fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.97) translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1) translateY(0);
+  }
+}
+
+.animate-placeholder-in {
+  animation: placeholder-fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
