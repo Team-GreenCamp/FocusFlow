@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FocusFlow - 계획은 그만, 바로 몰입하세요</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c3c5d9",
+                        "inverse-surface": "#283044",
+                        "secondary-fixed-dim": "#abd600",
+                        "on-surface-variant": "#434656",
+                        "secondary": "#506600",
+                        "secondary-container": "#c1f100",
+                        "surface-container": "#eaedff",
+                        "on-primary-container": "#e3e6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#972500",
+                        "on-secondary-container": "#546b00",
+                        "on-background": "#131b2e",
+                        "secondary-fixed": "#c3f400",
+                        "tertiary-fixed": "#ffdbd1",
+                        "inverse-on-surface": "#eef0ff",
+                        "surface": "#faf8ff",
+                        "on-tertiary-fixed-variant": "#872100",
+                        "surface-tint": "#004dea",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f2f3ff",
+                        "on-primary-fixed-variant": "#0039b3",
+                        "background": "#faf8ff",
+                        "on-secondary-fixed-variant": "#3c4d00",
+                        "primary-container": "#0055ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001551",
+                        "primary": "#0041c8",
+                        "surface-dim": "#d2d9f4",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#131b2e",
+                        "tertiary-fixed-dim": "#ffb5a0",
+                        "tertiary-container": "#c13301",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#dae2fd",
+                        "surface-container-high": "#e2e7ff",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-bright": "#faf8ff",
+                        "primary-fixed": "#dce1ff",
+                        "on-tertiary-fixed": "#3b0900",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737688",
+                        "surface-container-highest": "#dae2fd",
+                        "on-tertiary-container": "#ffe1d9",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#161e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "unit": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Pretendard", "Geist"],
+                        "code": ["Geist Mono"],
+                        "headline-lg-mobile": ["Pretendard", "Geist"],
+                        "body-lg": ["Pretendard", "Geist"],
+                        "headline-md": ["Pretendard", "Geist"],
+                        "body-md": ["Pretendard", "Geist"],
+                        "headline-lg": ["Pretendard", "Geist"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "code": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Pretendard', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at top right, #e3e6ff 0%, #faf8ff 50%);
+        }
+        .bento-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 10px 30px rgba(0, 77, 234, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm flex justify-between items-center px-margin-desktop h-16 w-full">
+<div class="flex items-center gap-unit">
+<span class="font-headline-md text-headline-md font-bold text-primary">FocusFlow</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Home</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors px-3 py-1 rounded font-label-md text-label-md" href="#">Features</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors px-3 py-1 rounded font-label-md text-label-md" href="#">Pricing</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-low transition-colors px-3 py-1 rounded font-label-md text-label-md" href="#">Resources</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80 p-2 hover:bg-surface-container-low rounded-full">search</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80 p-2 hover:bg-surface-container-low rounded-full">notifications</span>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md active:scale-95 transition-all">시작하기</button>
+</div>
+</header>
+<main class="pt-16">
+<!-- Hero Section -->
+<section class="hero-gradient relative overflow-hidden px-margin-mobile md:px-margin-desktop py-24 md:py-32 flex flex-col items-center text-center">
+<div class="z-10 max-w-4xl">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container mb-8 animate-bounce">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span class="font-label-md text-label-md">AI 기반 인지 가속기 출시</span>
+</div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8 tracking-tight">
+                    계획은 그만, <span class="text-primary">바로 몰입하세요</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12 max-w-2xl mx-auto">
+                    FocusFlow는 단순한 할 일 목록이 아닙니다. 당신의 뇌가 최적의 몰입 상태에 도달하도록 돕는 인지 모멘텀 엔진입니다. 복잡한 생각은 시스템에 맡기고, 당신은 실행에만 집중하세요.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button class="bg-primary text-on-primary px-10 py-4 rounded-xl font-headline-md text-headline-md flex items-center justify-center gap-2 group active:scale-95 transition-all shadow-lg shadow-primary/20">
+                        무료로 몰입 시작하기
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="bg-surface border border-outline text-on-surface px-10 py-4 rounded-xl font-headline-md text-headline-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors">
+                        데모 영상 보기
+                        <span class="material-symbols-outlined">play_circle</span>
+</button>
+</div>
+</div>
+<!-- Hero Image Mockup -->
+<div class="mt-20 relative w-full max-w-container-max mx-auto px-4">
+<div class="glass-card rounded-2xl overflow-hidden shadow-2xl border-outline-variant p-2">
+<img class="w-full h-auto rounded-xl" data-alt="A futuristic, high-fidelity productivity dashboard interface displayed on a sleek ultra-wide monitor. The UI features a clean white background with vibrant electric blue accents and neon lime highlights for focus metrics. Soft, diffused lighting creates a professional and energetic atmosphere. The interface shows deep work session graphs, task breakdowns with glowing indicators, and minimalist navigation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMu6WKTq5KSLQxd194zAYkt85HGt9oo5gEzONB3LJ-sxTkn6kecDeMoks6hCpHqcaHddQMvO_ul39IM8ANfzJg1e8AWf4Q9Y_PaAixgBV4UuHF6Cmf_DoCVp0V1uk0xP5S68nzdf3K0RRxbnVufl8K0PUjxZx5JV1XWgviguiJYfBfuMMS7DU3ID9DQ3WZ5wHgj0j0qlt7CYGWNZ-C1ENqsGd0KQUwaUCWCaQh2o9Ff6OgiuC59IZeC7kag9nN0fstMuX1Uej0-fKn"/>
+</div>
+<!-- Floating Badges -->
+<div class="absolute -top-6 -left-4 md:left-12 glass-card p-4 rounded-xl shadow-xl flex items-center gap-3 animate-pulse">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div class="text-left">
+<p class="font-label-md text-label-md text-on-surface">몰입 지수</p>
+<p class="font-headline-md text-headline-md text-primary">92%</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Intelligent Workflow: Bento Grid -->
+<section class="px-margin-mobile md:px-margin-desktop py-24 bg-white">
+<div class="max-w-container-max mx-auto">
+<div class="mb-16 text-center md:text-left">
+<h2 class="font-headline-lg-mobile md:font-headline-md text-headline-lg-mobile md:text-headline-md mb-4">지능형 워크플로우 디자인</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">인지 부하를 최소화하는 네 가지 핵심 기술</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[800px]">
+<!-- AI Task Breakdown -->
+<div class="md:col-span-8 bg-surface-container-low rounded-2xl p-8 flex flex-col justify-between border border-outline-variant bento-hover transition-all relative overflow-hidden group">
+<div class="z-10">
+<span class="material-symbols-outlined text-primary text-4xl mb-4">auto_awesome</span>
+<h3 class="font-headline-md text-headline-md mb-2">AI 태스크 분해</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">모호한 목표를 즉시 실행 가능한 최소 단위의 행동으로 쪼개어 드립니다. 망설임 없는 시작을 경험하세요.</p>
+</div>
+<div class="mt-8 z-10">
+<div class="flex flex-col gap-3">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant flex items-center justify-between group-hover:translate-x-2 transition-transform duration-300">
+<span class="font-label-md">Q3 전략 보고서 작성</span>
+<span class="material-symbols-outlined text-primary">chevron_right</span>
+</div>
+<div class="bg-primary/5 p-4 rounded-xl border border-primary/20 ml-8 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">subdirectory_arrow_right</span>
+<span class="font-body-md">핵심 지표 데이터 수집 (15분)</span>
+</div>
+</div>
+</div>
+<div class="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[300px]">architecture</span>
+</div>
+</div>
+<!-- Flow Analytics -->
+<div class="md:col-span-4 bg-secondary-container/20 rounded-2xl p-8 flex flex-col border border-secondary/20 bento-hover transition-all">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4">analytics</span>
+<h3 class="font-headline-md text-headline-md mb-2">몰입 분석</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">당신의 집중 패턴을 시각화하고 최적의 몰입 시간을 제안합니다.</p>
+<div class="mt-auto h-48 bg-white/50 rounded-xl border border-secondary/10 p-4 flex items-end gap-2">
+<div class="bg-secondary-fixed h-[40%] w-full rounded-t-sm"></div>
+<div class="bg-secondary-fixed h-[70%] w-full rounded-t-sm"></div>
+<div class="bg-secondary-fixed h-[95%] w-full rounded-t-sm"></div>
+<div class="bg-secondary-fixed h-[60%] w-full rounded-t-sm"></div>
+<div class="bg-secondary-fixed h-[85%] w-full rounded-t-sm"></div>
+</div>
+</div>
+<!-- Logical Ordering -->
+<div class="md:col-span-4 bg-surface-container rounded-2xl p-8 border border-outline-variant bento-hover transition-all flex flex-col">
+<span class="material-symbols-outlined text-primary text-4xl mb-4">reorder</span>
+<h3 class="font-headline-md text-headline-md mb-2">논리적 배열</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">중요도와 에너지 수준에 따른 최적의 작업 순서를 자동 배치합니다.</p>
+<div class="mt-8 space-y-2">
+<div class="h-2 w-full bg-primary/20 rounded-full"></div>
+<div class="h-2 w-3/4 bg-primary/10 rounded-full"></div>
+<div class="h-2 w-1/2 bg-primary/5 rounded-full"></div>
+</div>
+</div>
+<!-- The Vault -->
+<div class="md:col-span-8 bg-inverse-surface rounded-2xl p-8 flex items-center gap-12 border border-outline bento-hover transition-all text-white overflow-hidden relative">
+<div class="z-10 flex-1">
+<span class="material-symbols-outlined text-secondary-fixed text-4xl mb-4">inventory_2</span>
+<h3 class="font-headline-md text-headline-md mb-2">볼트 (The Vault)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">모든 영감과 프로젝트 데이터를 한 곳에 안전하게 보관하세요. 검색이 필요 없는 직관적 연결을 제공합니다.</p>
+</div>
+<div class="z-10 hidden md:block w-1/2">
+<img class="rounded-xl shadow-2xl" data-alt="A clean, minimalist 3D rendering of a digital safe or secure storage unit. The safe is composed of glowing translucent blue glass panels with cyber lime light strips. Thousands of tiny floating particles of light represent data bits organized in a structured grid pattern. The background is a dark, sophisticated navy blue, creating a sense of security and high-tech elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuGvxo2vVLmRzXdz8XzvVDu-wsJt6tVStzCwFyaeciid3N4q44OZmqIx_059R3hvS_3MfGHcDL0ndGL722HspHUOr3wUMNboF5j0R2q7vIfl1dpV69maHOSZ_Qp95UNBefWYwqaKIE8DOdD-s-ShXI6l2PdyJNZQqKtVxc48YYvbk49-zGaRUTufrVlquz7AwMb5RzllVu6t4Jieonp1CX5_NcP7GJq7hwWhGNSgOyeZks3cYAaa5TuM0MN8RXrCXEMV-5oM_FHqyb"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="bg-primary text-on-primary py-24 px-margin-mobile md:px-margin-desktop text-center relative overflow-hidden">
+<!-- Decorative Elements -->
+<div class="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+<div class="absolute bottom-0 right-0 w-96 h-96 bg-secondary-container/10 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl"></div>
+<div class="relative z-10 max-w-3xl mx-auto">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8">당신의 최고 효율은<br/>오늘 시작됩니다</h2>
+<p class="font-body-lg text-body-lg opacity-80 mb-12">전 세계 5만 명의 리더와 창작자들이 FocusFlow로 업무의 한계를 넘어서고 있습니다. 지금 합류하세요.</p>
+<div class="flex flex-col items-center gap-6">
+<button class="bg-secondary-container text-on-secondary-container px-12 py-5 rounded-full font-headline-md text-headline-md hover:scale-105 active:scale-95 transition-all shadow-xl">
+                        지금 무료로 시작하기
+                    </button>
+<p class="font-label-md text-label-md opacity-60">신용카드 정보 불필요 • 14일 무료 체험</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface border-t border-outline-variant py-12 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+<div class="max-w-xs">
+<span class="font-headline-md text-headline-md font-bold text-primary block mb-4">FocusFlow</span>
+<p class="font-body-md text-body-md text-on-surface-variant">인지 모멘텀 엔진을 통해 당신의 생산성을 한 차원 높여드립니다.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-12">
+<div>
+<h4 class="font-label-md text-label-md mb-6 uppercase tracking-widest text-primary">Product</h4>
+<ul class="space-y-4 font-body-md text-body-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" href="#">Features</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Integrations</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Pricing</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md mb-6 uppercase tracking-widest text-primary">Company</h4>
+<ul class="space-y-4 font-body-md text-body-md text-on-surface-variant">
+<li><a class="hover:text-primary transition-colors" href="#">About</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Careers</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+<div class="col-span-2 md:col-span-1">
+<h4 class="font-label-md text-label-md mb-6 uppercase tracking-widest text-primary">Newsletter</h4>
+<div class="flex gap-2">
+<input class="bg-white border border-outline-variant rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Email" type="email"/>
+<button class="bg-primary text-white p-2 rounded-lg"><span class="material-symbols-outlined">send</span></button>
+</div>
+</div>
+</div>
+</div>
+<div class="max-w-container-max mx-auto mt-12 pt-8 border-t border-outline-variant flex flex-col md:row justify-between items-center gap-4">
+<p class="font-label-md text-label-md text-on-surface-variant">© 2024 FocusFlow. All rights reserved.</p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">language</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">share</span>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions and hover effects
+        document.querySelectorAll('.bento-hover').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0px)';
+            });
+        });
+
+        // Simple scroll reveal
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>

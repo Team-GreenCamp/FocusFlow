@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  LOCKED
+  ACTIVE
+  DONE
+}
+
+model Goal {
+  id          String      @id @default(cuid())
+  userId      String?
+  title       String
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steps       TaskStep[]
+  reflections Reflection[]
+
+  @@index([userId])
+}
+
+model TaskStep {
+  id              String      @id @default(cuid())
+  goalId          String
+  parentStepId    String?
+  order           Int
+  title           String
+  description     String
+  estimateMinutes Int
+  status          TaskStatus  @default(LOCKED)
+  completedAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  goal            Goal        @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  parentStep      TaskStep?   @relation("StepChildren", fields: [parentStepId], references: [id], onDelete: Cascade)
+  childSteps      TaskStep[]  @relation("StepChildren")
+
+  @@index([goalId, parentStepId, order])
+}
+
+model DailyNote {
+  id        String   @id @default(cuid())
+  userId    String?
+  date      DateTime
+  memo      String
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Reflection {
+  id        String   @id @default(cuid())
+  userId    String?
+  goalId    String?
+  date      DateTime
+  memo      String
+  markdown  String
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal      Goal?    @relation(fields: [goalId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([date])
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  goals         Goal[]
+  dailyNotes    DailyNote[]
+  reflections   Reflection[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

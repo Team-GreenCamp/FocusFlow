@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
+        
+        body {
+            font-family: 'Geist', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .timer-glow {
+            text-shadow: 0 0 40px rgba(0, 77, 234, 0.1);
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .animate-pulse-soft {
+            animation: pulse-soft 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c3c5d9",
+                        "inverse-surface": "#283044",
+                        "secondary-fixed-dim": "#abd600",
+                        "on-surface-variant": "#434656",
+                        "secondary": "#506600",
+                        "secondary-container": "#c1f100",
+                        "surface-container": "#eaedff",
+                        "on-primary-container": "#e3e6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#972500",
+                        "on-secondary-container": "#546b00",
+                        "on-background": "#131b2e",
+                        "secondary-fixed": "#c3f400",
+                        "tertiary-fixed": "#ffdbd1",
+                        "inverse-on-surface": "#eef0ff",
+                        "surface": "#faf8ff",
+                        "on-tertiary-fixed-variant": "#872100",
+                        "surface-tint": "#004dea",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f2f3ff",
+                        "on-primary-fixed-variant": "#0039b3",
+                        "background": "#faf8ff",
+                        "on-secondary-fixed-variant": "#3c4d00",
+                        "primary-container": "#0055ff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001551",
+                        "primary": "#0041c8",
+                        "surface-dim": "#d2d9f4",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#131b2e",
+                        "tertiary-fixed-dim": "#ffb5a0",
+                        "tertiary-container": "#c13301",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#dae2fd",
+                        "surface-container-high": "#e2e7ff",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-bright": "#faf8ff",
+                        "primary-fixed": "#dce1ff",
+                        "on-tertiary-fixed": "#3b0900",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737688",
+                        "surface-container-highest": "#dae2fd",
+                        "on-tertiary-container": "#ffe1d9",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#161e00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "unit": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Geist"],
+                        "code": ["Geist Mono"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "body-md": ["Geist"],
+                        "headline-lg": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "code": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col overflow-hidden">
+<!-- Top AppBar (Identity Sync) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 w-full border-b border-outline-variant dark:border-outline-variant bg-surface shadow-sm">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary">FocusFlow</span>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<span class="text-on-surface-variant font-medium text-label-md">Deep Work Session</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-label-md">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+                심층 업무 모드
+            </div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">help</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5AU51Rnw48dMQQe347_4Dpcy-uOYoDeA1fhpNVQKIE_O6QWfsJOiIXLwnw00WtyiRgs4r8tOaUX8U9aacrHEPUogGNNoQQXg2Wlo9m_QuP6BY6VG4CRgVyR4L3--3HMl8w1qpZI3TwAuOoOgh3lJSyI3DBqmby5lZSCG5rwQb-P0U4u668SdnnOZY5Vmbm_CZXzeiVxBZLo16q-0tL5piyqPr9Iq87Ad5Xn-geGiaM0-1qxT5ANgmA-fWVHa-39uXhHS_TxYiw5w5"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Suppressed for Focus Mode but available for identity) -->
+<!-- Hidden in focus mode per UX rules to prioritize canvas -->
+<main class="flex-1 flex flex-col items-center justify-center p-gutter relative mt-16">
+<!-- Background Ambient Element -->
+<div class="absolute inset-0 z-0 flex items-center justify-center opacity-20 pointer-events-none">
+<div class="w-[800px] h-[800px] bg-primary rounded-full blur-[160px]"></div>
+</div>
+<div class="relative z-10 w-full max-w-2xl flex flex-col items-center text-center">
+<!-- Sprint Header -->
+<div class="mb-12 animate-pulse-soft">
+<div class="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-label-md">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                    진행 중인 스프린트
+                </div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-2">
+                    Architectural Pattern Refactoring
+                </h1>
+<p class="text-on-surface-variant font-body-lg">
+                    클린 아키텍처 원칙에 따른 모듈 구조 재정립
+                </p>
+</div>
+<!-- Central Timer -->
+<div class="relative mb-16">
+<!-- Circular Progress SVG (Subtle background) -->
+<svg class="absolute -inset-16 w-[calc(100%+128px)] h-[calc(100%+128px)] -rotate-90">
+<circle class="text-surface-container-high" cx="50%" cy="50%" fill="transparent" r="48%" stroke="currentColor" stroke-width="2"></circle>
+<circle class="text-primary transition-all duration-1000" cx="50%" cy="50%" fill="transparent" r="48%" stroke="currentColor" stroke-dasharray="100 100" stroke-linecap="round" stroke-width="6" style="stroke-dasharray: 41 100;"></circle>
+</svg>
+<div class="relative">
+<span class="font-headline-lg text-[160px] leading-none font-bold tracking-tighter text-on-surface timer-glow">
+                        24:56
+                    </span>
+</div>
+</div>
+<!-- Progress Indicator -->
+<div class="w-full max-w-md mb-16">
+<div class="flex justify-between items-end mb-3">
+<span class="text-label-md text-on-surface-variant">전체 목표의 41% 완료</span>
+<span class="text-label-md font-bold text-primary">02 / 05 세션</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[41%] rounded-full shadow-[0_0_12px_rgba(0,65,200,0.3)] transition-all duration-700"></div>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center justify-center gap-gutter">
+<button class="group flex items-center gap-3 px-8 py-4 bg-primary text-on-primary rounded-xl font-headline-md shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>완료</span>
+</button>
+<button class="flex items-center gap-3 px-8 py-4 bg-surface-container-lowest border border-outline-variant text-on-surface rounded-xl font-headline-md hover:bg-surface-container-low active:scale-95 transition-all">
+<span class="material-symbols-outlined">coffee</span>
+<span>휴식하기</span>
+</button>
+<button class="flex items-center gap-3 px-8 py-4 bg-surface-container-lowest border border-outline-variant text-on-surface rounded-xl font-headline-md hover:bg-surface-container-low active:scale-95 transition-all">
+<span class="material-symbols-outlined">more_time</span>
+<span>연장</span>
+</button>
+</div>
+</div>
+<!-- Productivity Insights Card (Asymmetric Layout Element) -->
+<div class="fixed bottom-margin-desktop right-margin-desktop w-72 glass-panel p-6 rounded-xl hidden md:block">
+<div class="flex items-center gap-2 mb-4 text-primary">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+<span class="text-label-md uppercase tracking-wider">현재 집중도 점수</span>
+</div>
+<div class="flex items-end gap-1 mb-2">
+<span class="text-headline-md font-bold text-on-surface">94</span>
+<span class="text-label-md text-on-surface-variant pb-1">/ 100</span>
+</div>
+<p class="text-body-md text-on-surface-variant leading-tight">
+                현재 일정한 타이핑 속도와 집중력을 유지하고 있습니다. 최고 기록까지 6점 남았습니다.
+            </p>
+<div class="mt-4 pt-4 border-t border-outline-variant flex gap-2">
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-primary rounded-full opacity-30"></div>
+</div>
+</div>
+<!-- Active Focus Background Image (Atmospheric) -->
+<div class="fixed bottom-0 left-0 w-64 h-64 -translate-x-12 translate-y-12 opacity-10 pointer-events-none">
+<img class="w-full h-full object-contain" data-alt="A striking abstract digital rendering of architectural wireframes and clean structural lines on a soft, ethereal light-mode background. The composition uses a sophisticated palette of electric blue and pristine whites, conveying a sense of technological precision and mental clarity. The lighting is bright and airy, with subtle geometric overlays that suggest deep focused work and professional execution. The mood is serene yet energized for productivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAI4S2_aZ1z3sKChxvz4F42wFwsuiVrkH10mHz3Lyswn0yemZqUH5he609aQd7ClSDgaF6yoxMbwlVJn1jSIMDSzxaggEgO1SDDaAsMk7E4yzydKwMZ61iEZQwKDRaZLsLtYnIfBN0mBjwZd6jJl2OGsfHe7ER8ThP_8VLyN_ndDz9SgfVl5YS33kKn_0woWcGT9lh0ItfHoq55JYLXEtNNSK0-IfigsAWTXIIDGa-KKsolEJ162Aq2LBIGi_tFlOiEjg8zx5aB-xHC"/>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple timer decrement simulation for visual effect
+        let timeLeft = 24 * 60 + 56;
+        const timerDisplay = document.querySelector('.timer-glow');
+        
+        setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
+
+        // Interaction scale animations
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+        });
+    </script>
+</body></html>

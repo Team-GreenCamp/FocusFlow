@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Pretendard', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "outline-variant": "#c3c5d9",
+                      "inverse-surface": "#283044",
+                      "secondary-fixed-dim": "#abd600",
+                      "on-surface-variant": "#434656",
+                      "secondary": "#506600",
+                      "secondary-container": "#c1f100",
+                      "surface-container": "#eaedff",
+                      "on-primary-container": "#e3e6ff",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#972500",
+                      "on-secondary-container": "#546b00",
+                      "on-background": "#131b2e",
+                      "secondary-fixed": "#c3f400",
+                      "tertiary-fixed": "#ffdbd1",
+                      "inverse-on-surface": "#eef0ff",
+                      "surface": "#faf8ff",
+                      "on-tertiary-fixed-variant": "#872100",
+                      "surface-tint": "#004dea",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#f2f3ff",
+                      "on-primary-fixed-variant": "#0039b3",
+                      "background": "#faf8ff",
+                      "on-secondary-fixed-variant": "#3c4d00",
+                      "primary-container": "#0055ff",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed": "#001551",
+                      "primary": "#0041c8",
+                      "surface-dim": "#d2d9f4",
+                      "on-secondary": "#ffffff",
+                      "on-surface": "#131b2e",
+                      "tertiary-fixed-dim": "#ffb5a0",
+                      "tertiary-container": "#c13301",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#dae2fd",
+                      "surface-container-high": "#e2e7ff",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "surface-bright": "#faf8ff",
+                      "primary-fixed": "#dce1ff",
+                      "on-tertiary-fixed": "#3b0900",
+                      "inverse-primary": "#b6c4ff",
+                      "on-tertiary": "#ffffff",
+                      "outline": "#737688",
+                      "surface-container-highest": "#dae2fd",
+                      "on-tertiary-container": "#ffe1d9",
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed": "#161e00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "unit": "8px",
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "label-md": ["Geist"],
+                      "code": ["Geist Mono"],
+                      "headline-lg-mobile": ["Geist"],
+                      "body-lg": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "body-md": ["Geist"],
+                      "headline-lg": ["Geist"]
+              },
+              "fontSize": {
+                      "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "code": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
+                      "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 w-full bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline-variant shadow-sm">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary">FocusFlow</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8">
+<span class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md cursor-pointer">Deep Work</span>
+<span class="text-on-surface-variant font-medium font-label-md text-label-md cursor-pointer hover:bg-surface-container-low transition-colors">Goals</span>
+<span class="text-on-surface-variant font-medium font-label-md text-label-md cursor-pointer hover:bg-surface-container-low transition-colors">Insights</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80">help</span>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional studio portrait of a young man with a friendly expression, captured with high-key lighting to emphasize clarity and brightness. The background is a clean, minimalist off-white, reflecting a modern light-mode interface aesthetic. The lighting is soft and even, highlighting subtle textures in his skin and dark hair, creating a sense of professional reliability and cognitive focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3r0fy00R-BzZfIwqYZGyF04Uqw3kaCiIGZ1zsyEakFIsklXoDqOWv_G0FJGGYlj1V5A36GizsW2VOkXCyR9_7FWRjDD-hBlz1AM0_s13jhIcVNYdMLw8qWZdmV7fWjd9WKvoJ57wkv-GjTSSeA2ivXSm0QeIqMG3wWDXwwXdbIWmCsWpDFbKOuLLFnb6HeMofjX6xuYXbh1huksOJstz3KhNAVgitIW-CFRiLRmknaFLnR-zIiLfj3XgRtE8o2maiyzuBgEIvKVrJ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low dark:bg-surface-container-low flex flex-col p-gutter gap-unit hidden md:flex">
+<div class="mb-12 mt-4">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">FocusFlow</h1>
+<p class="text-on-surface-variant text-sm">Cognitive Momentum</p>
+</div>
+<nav class="flex-1 space-y-2">
+<button class="w-full flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">Deep Work</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">target</span>
+<span class="font-label-md text-label-md">Goals</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Insights</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Vault</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</button>
+</nav>
+<button class="mt-auto bg-primary text-on-primary py-4 px-6 rounded-xl font-label-md text-label-md shadow-lg hover:shadow-xl transition-all active:scale-95">
+            New Focus Session
+        </button>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-24 px-gutter pb-margin-desktop min-h-screen bg-surface">
+<div class="max-w-container-max mx-auto space-y-gutter">
+<!-- Welcome Section & Streak -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">좋은 아침입니다, Alex.</h2>
+<p class="text-body-lg text-on-surface-variant mt-2">오늘의 인지 에너지는 최고조에 도달해 있습니다.</p>
+</div>
+<div class="bg-surface-container-high px-6 py-4 rounded-xl flex items-center gap-4 border border-outline-variant">
+<div class="text-right">
+<p class="text-xs font-bold text-primary uppercase tracking-wider">Current Streak</p>
+<p class="text-headline-md font-bold">14 Days</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- AI Pick: Focus Card (Architectural System Deep Dive) -->
+<div class="md:col-span-8 bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="relative h-64 overflow-hidden">
+<img alt="Architectural System Deep Dive" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A sophisticated architectural visualization of a futuristic glass building, captured during the blue hour to create a serene and intellectual mood. The image features sharp lines, complex structural geometry, and soft interior lighting that glows through the glass panels. The palette is dominated by cool blues and crisp whites, perfectly aligning with a high-end corporate light-mode aesthetic that suggests depth and precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-RJ5fsFmaROMH0hnAwOa14vNZownRVPQS_5kWKCqevnf84MW_V9MWf6kzVH_BU4Z9q8i0iIdUfJrOL9U5bCc83Zti9haeGaZ9VkEbMR9v9MYD01Sc1pVknh8hyuO1Io5CNd39XNG7DHk7iGVRpK5D9Lnz4Pq5PY4Y2swC-uRRo0uKii8wHHoeSrbEL1QGOyQw9K49-UrLi-mNYCBEl_sviunOahf1i_fG2P69KVSjF1M7oQVMWzL-1GXGpMOhgYGXKc8KCaq73EzI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-8">
+<span class="bg-secondary-container text-on-secondary-container text-xs font-bold px-3 py-1 rounded-full w-fit mb-3">AI 추천 세션</span>
+<h3 class="text-white font-headline-md text-headline-md">Architectural System Deep Dive</h3>
+<p class="text-white/80 text-body-md mt-2">오늘 아침의 명료함을 활용하여 가장 복잡한 로직을 해결하세요.</p>
+</div>
+</div>
+<div class="p-6 flex justify-between items-center bg-white">
+<div class="flex gap-6">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+<span class="text-label-md">90분</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+<span class="text-label-md">고강도</span>
+</div>
+</div>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-label-md text-label-md hover:bg-primary-container transition-colors">몰입 시작</button>
+</div>
+</div>
+<!-- System Insights Card -->
+<div class="md:col-span-4 flex flex-col gap-gutter">
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 flex-1 space-y-6">
+<div class="flex justify-between items-center">
+<h4 class="font-headline-md text-sm font-bold uppercase tracking-tight text-on-surface-variant">System Insights</h4>
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-white rounded-lg border border-outline-variant">
+<p class="text-xs text-on-surface-variant">Peak Focus Window</p>
+<p class="text-body-lg font-bold">오전 9:30 - 11:45</p>
+<div class="mt-2 w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+</div>
+<div class="p-4 bg-white rounded-lg border border-outline-variant">
+<p class="text-xs text-on-surface-variant">Cognitive Load</p>
+<p class="text-body-lg font-bold">최적 (Optimal)</p>
+<div class="mt-2 flex gap-1">
+<div class="h-1 flex-1 bg-secondary rounded-full"></div>
+<div class="h-1 flex-1 bg-secondary rounded-full"></div>
+<div class="h-1 flex-1 bg-secondary rounded-full"></div>
+<div class="h-1 flex-1 bg-surface-container rounded-full"></div>
+</div>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed italic">
+                            "최근 3일간 오전 세션에서 평균 12% 더 높은 생산성을 기록했습니다."
+                        </p>
+</div>
+</div>
+<!-- The Flow Path Timeline -->
+<div class="md:col-span-12 bg-white border border-outline-variant rounded-xl p-8">
+<div class="flex justify-between items-center mb-10">
+<h3 class="font-headline-md text-headline-md text-on-surface">The Flow Path</h3>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container-low"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="relative">
+<!-- Connecting Line -->
+<div class="absolute top-1/2 left-0 w-full h-px bg-outline-variant -translate-y-1/2"></div>
+<div class="relative flex justify-between gap-4 overflow-x-auto pb-4">
+<!-- Timeline Item 1 -->
+<div class="flex flex-col items-center min-w-[120px] relative z-10 bg-white px-2">
+<span class="text-xs font-bold text-on-surface-variant mb-4">08:00</span>
+<div class="w-4 h-4 rounded-full bg-secondary ring-8 ring-secondary-container mb-4"></div>
+<p class="text-label-md text-center font-bold">기상 &amp; 준비</p>
+</div>
+<!-- Timeline Item 2 -->
+<div class="flex flex-col items-center min-w-[120px] relative z-10 bg-white px-2">
+<span class="text-xs font-bold text-on-surface-variant mb-4">09:30</span>
+<div class="w-4 h-4 rounded-full bg-primary ring-8 ring-primary-container/20 mb-4 animate-pulse"></div>
+<p class="text-label-md text-center font-bold text-primary">Deep Work</p>
+</div>
+<!-- Timeline Item 3 -->
+<div class="flex flex-col items-center min-w-[120px] relative z-10 bg-white px-2 opacity-50">
+<span class="text-xs font-bold text-on-surface-variant mb-4">11:30</span>
+<div class="w-4 h-4 rounded-full bg-outline-variant mb-4"></div>
+<p class="text-label-md text-center">리뷰 &amp; 휴식</p>
+</div>
+<!-- Timeline Item 4 -->
+<div class="flex flex-col items-center min-w-[120px] relative z-10 bg-white px-2 opacity-50">
+<span class="text-xs font-bold text-on-surface-variant mb-4">13:00</span>
+<div class="w-4 h-4 rounded-full bg-outline-variant mb-4"></div>
+<p class="text-label-md text-center">전략 회의</p>
+</div>
+<!-- Timeline Item 5 -->
+<div class="flex flex-col items-center min-w-[120px] relative z-10 bg-white px-2 opacity-50">
+<span class="text-xs font-bold text-on-surface-variant mb-4">15:00</span>
+<div class="w-4 h-4 rounded-full bg-outline-variant mb-4"></div>
+<p class="text-label-md text-center">코드 최적화</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Ready for something bigger Section -->
+<div class="md:col-span-12 bg-primary rounded-2xl p-10 flex flex-col md:flex-row items-center gap-8 text-on-primary">
+<div class="flex-1 space-y-4 text-center md:text-left">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg">더 큰 목표를 향해 도전할 준비가 되었나요?</h2>
+<p class="text-body-lg opacity-90 max-w-2xl">FocusFlow와 함께 장기 프로젝트를 설정하고 매일매일의 추진력을 관리하세요.</p>
+<div class="pt-4 flex flex-wrap justify-center md:justify-start gap-4">
+<button class="bg-secondary text-on-secondary px-8 py-4 rounded-xl font-label-md text-label-md hover:scale-105 transition-transform flex items-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                                새로운 목표 만들기
+                            </button>
+<button class="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-xl font-label-md text-label-md backdrop-blur-md transition-all">
+                                가이드 보기
+                            </button>
+</div>
+</div>
+<div class="w-full md:w-1/3 h-64 relative rounded-xl overflow-hidden shadow-2xl">
+<img alt="Goal Creation Visualization" class="w-full h-full object-cover" data-alt="An inspiring workplace image featuring a clean, minimalist wooden desk with a high-end laptop showing abstract code, a single cup of black coffee, and a notepad with sketches. The scene is illuminated by natural sunlight streaming through a large window, creating bright highlights and long, soft shadows. The overall aesthetic is one of calm, professional productivity and the beginning of a significant creative journey, fitting the FocusFlow brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCx1DcjXEaDj7kij-QJLJokkdPuGNp1dxmMjbrGMKRhmrnunM7-RVOtiuEcmEsstBqvI61LtqbWoNACXCFMs0DDci_4eiMZ6CABG9mdknLX8x4t5NIJqf0WgM_NKRCLCB1VtwKOWFX9kBOOTGX5cMsmg7Ad5kqwiliGJbqwYuLQbL7gSklsQZMD8r8Tgbkpts0A0CHfFGYPHsKjzYNk9eFyRPNU28dEnvSzyYMJ6XJQYVVTxzOVz5YMiX-s6OwQ-YZVpBTrf0hyQx26"/>
+<div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for mobile -->
+<div class="fixed bottom-8 right-8 md:hidden">
+<button class="w-14 h-14 rounded-full bg-primary text-on-primary shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<!-- Bottom Nav for Mobile -->
+<nav class="fixed bottom-0 w-full bg-white border-t border-outline-variant px-margin-mobile h-16 flex items-center justify-around md:hidden z-50">
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-[10px] font-bold">Focus</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">target</span>
+<span class="text-[10px]">Goals</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px]">Stats</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px]">Setup</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for the timeline scroll
+        const scrollContainer = document.querySelector('.overflow-x-auto');
+        if (scrollContainer) {
+            scrollContainer.addEventListener('wheel', (evt) => {
+                evt.preventDefault();
+                scrollContainer.scrollLeft += evt.deltaY;
+            });
+        }
+
+        // Dashboard atmospheric effects
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('FocusFlow Dashboard Initialized - Light Mode Active');
+        });
+    </script>
+</body></html>

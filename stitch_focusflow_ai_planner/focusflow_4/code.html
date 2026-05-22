@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FocusFlow Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Geist:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #10131a;
+            color: #e1e2ec;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#0b0e15",
+                    "inverse-on-surface": "#2e3038",
+                    "surface-tint": "#adc6ff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-surface-variant": "#c2c6d6",
+                    "on-tertiary-fixed": "#311400",
+                    "surface": "#10131a",
+                    "primary-container": "#4d8eff",
+                    "on-primary-container": "#00285d",
+                    "on-primary": "#002e6a",
+                    "background": "#10131a",
+                    "on-secondary-fixed-variant": "#3c4d00",
+                    "outline-variant": "#424754",
+                    "secondary-fixed-dim": "#abd600",
+                    "error": "#ffb4ab",
+                    "inverse-surface": "#e1e2ec",
+                    "tertiary-fixed-dim": "#ffb786",
+                    "surface-container-high": "#272a31",
+                    "inverse-primary": "#005ac2",
+                    "on-secondary-fixed": "#161e00",
+                    "tertiary": "#ffb786",
+                    "surface-container-highest": "#32353c",
+                    "surface-bright": "#363941",
+                    "on-surface": "#e1e2ec",
+                    "surface-variant": "#32353c",
+                    "error-container": "#93000a",
+                    "primary": "#adc6ff",
+                    "on-primary-fixed": "#001a42",
+                    "secondary": "#ffffff",
+                    "surface-container": "#1d2027",
+                    "on-tertiary-fixed-variant": "#723600",
+                    "outline": "#8c909f",
+                    "surface-container-low": "#191b23",
+                    "on-primary-fixed-variant": "#004395",
+                    "tertiary-container": "#df7412",
+                    "secondary-container": "#c3f400",
+                    "secondary-fixed": "#c3f400",
+                    "tertiary-fixed": "#ffdcc6",
+                    "on-background": "#e1e2ec",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-tertiary": "#502400",
+                    "on-tertiary-container": "#461f00",
+                    "on-secondary": "#283500",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#10131a",
+                    "on-error": "#690005",
+                    "on-secondary-container": "#556d00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "48px",
+                    "container-max": "1440px",
+                    "unit": "8px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Geist"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Geist"],
+                    "body-lg": ["Inter"],
+                    "display-lg-mobile": ["Geist"],
+                    "display-lg": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-white/5 docked full-width top-0 sticky z-50 flex justify-between items-center px-margin-desktop py-4 w-full">
+<div class="flex items-center gap-8">
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight text-primary dark:text-primary-fixed-dim">FocusFlow</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex bg-surface-container rounded-full px-4 py-2 border border-white/5 items-center gap-3 w-64">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder-on-surface-variant w-full" placeholder="인사이트 검색..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+</button>
+<button class="active:scale-95 transition-transform hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="active:scale-95 transition-transform hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-72px)]">
+<!-- Sidebar Navigation -->
+<aside class="bg-surface-container-low border-r border-white/5 h-[calc(100vh-72px)] w-64 sticky top-[72px] hidden md:flex flex-col p-6 gap-8">
+<div class="flex flex-col gap-2">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Smart Planner</span>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-4 text-on-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-white/5 rounded-xl transition-all hover:scale-[1.02] cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+<span class="font-body-md text-body-md">집중 모드</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-white/5 rounded-xl transition-all hover:scale-[1.02] cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="track_changes">track_changes</span>
+<span class="font-body-md text-body-md">목표 관리</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-white/5 rounded-xl transition-all hover:scale-[1.02] cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">인사이트</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-white/5 rounded-xl transition-all hover:scale-[1.02] cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-body-md text-body-md">보관소</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-white/5 rounded-xl transition-all hover:scale-[1.02] cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">설정</span>
+</a>
+</nav>
+<button class="bg-primary-container text-on-primary-container py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+            New Focus Session
+        </button>
+<div class="flex flex-col gap-2 border-t border-white/5 pt-6">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-md text-body-md">고객 지원</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-2 hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">로그아웃</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow p-6 md:p-12 overflow-y-auto">
+<div class="max-w-[1200px] mx-auto">
+<header class="mb-10 flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">좋은 아침입니다, Alex님.</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg">오늘도 최적의 몰입 상태를 찾아볼까요?</p>
+</div>
+</header>
+<!-- Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Top Left: AI's Pick -->
+<div class="md:col-span-8 bg-surface-container rounded-3xl p-8 border border-white/5 flex flex-col justify-between min-h-[280px] shadow-sm">
+<div class="z-10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-sm text-label-sm text-secondary-fixed-dim tracking-wider">AI 추천 오늘의 몰입</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">아키텍처 시스템 딥다이브</h3>
+<p class="text-on-surface-variant max-w-md">사용자의 에너지 피크 시간에 맞춰, 향후 2시간은 복잡한 문제 해결에 최적화되어 있습니다. 일정을 미리 비워두었습니다.</p>
+</div>
+<div class="flex gap-4 z-10 mt-8">
+<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-bold transition-all hover:scale-105 active:scale-95">지금 몰입 시작</button>
+<button class="border border-white/20 text-on-surface px-6 py-3 rounded-full font-semibold transition-all hover:bg-white/5 active:scale-95">컨텍스트 확인</button>
+</div>
+</div>
+<!-- Top Right: Focus Status -->
+<div class="md:col-span-4 bg-surface-container rounded-3xl p-8 border border-white/5 flex flex-col justify-between shadow-sm">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant tracking-widest">현재 연속 달성</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-5xl font-extrabold text-primary">12</span>
+<span class="text-on-surface-variant">일</span>
+</div>
+</div>
+<div class="relative h-24 w-full flex items-center justify-center">
+<div class="absolute inset-0 bg-primary/5 rounded-2xl overflow-hidden">
+<div class="h-full bg-primary/20 w-3/4 rounded-r-full transition-all duration-1000" style="width: 82%;"></div>
+</div>
+<span class="relative z-10 font-bold text-on-primary-container">다음 목표: 15일</span>
+</div>
+<p class="text-sm text-on-surface-variant text-center">이번 주 상위 5% 집중력을 유지하고 있습니다.</p>
+</div>
+<!-- Middle: The Flow Path -->
+<div class="md:col-span-7 bg-surface-container rounded-3xl p-8 border border-white/5 shadow-sm">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline-md text-headline-md">오늘의 몰입 경로</h4>
+<span class="bg-surface-container-highest px-3 py-1 rounded-full text-xs font-semibold text-on-surface">TUESDAY, OCT 24</span>
+</div>
+<div class="space-y-8 relative">
+<!-- Vertical Line -->
+<div class="absolute left-4 top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary/50 to-transparent"></div>
+<!-- Task Item 1 -->
+<div class="relative pl-12 group">
+<div class="absolute left-[13px] top-2 w-2.5 h-2.5 bg-primary rounded-full ring-4 ring-primary/20 group-hover:scale-125 transition-transform"></div>
+<div class="flex flex-col gap-1">
+<span class="text-xs text-secondary-fixed-dim font-bold tracking-tighter uppercase">9:00 AM — NOW</span>
+<h5 class="text-on-surface font-semibold group-hover:text-primary transition-colors">Core Engine Refactoring</h5>
+<p class="text-sm text-on-surface-variant">High complexity · 90m block</p>
+</div>
+</div>
+<!-- Task Item 2 -->
+<div class="relative pl-12 group opacity-60 hover:opacity-100 transition-opacity">
+<div class="absolute left-[14px] top-2 w-2 h-2 bg-white/20 rounded-full group-hover:bg-primary transition-colors"></div>
+<div class="flex flex-col gap-1">
+<span class="text-xs text-on-surface-variant font-bold tracking-tighter uppercase">11:00 AM</span>
+<h5 class="text-on-surface font-semibold">AI Integration Workshop</h5>
+<p class="text-sm text-on-surface-variant">Collaboration · 45m session</p>
+</div>
+</div>
+<!-- Task Item 3 -->
+<div class="relative pl-12 group opacity-60 hover:opacity-100 transition-opacity">
+<div class="absolute left-[14px] top-2 w-2 h-2 bg-white/20 rounded-full group-hover:bg-primary transition-colors"></div>
+<div class="flex flex-col gap-1">
+<span class="text-xs text-on-surface-variant font-bold tracking-tighter uppercase">1:30 PM</span>
+<h5 class="text-on-surface font-semibold">Weekly Goal Review</h5>
+<p class="text-sm text-on-surface-variant">Reflection · 20m sprint</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Middle Right: Visualization Card -->
+<div class="md:col-span-5 relative overflow-hidden rounded-3xl group shadow-sm border border-white/5">
+<img alt="Cyberpunk visual" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A cinematic, high-contrast close-up of a futuristic glowing computer interface in a dimly lit obsidian room. The screen displays complex generative data visualizations in shades of electric blue and neon cyan, reflecting onto a polished glass surface. The atmosphere is sophisticated and high-tech, evoking a sense of deep intelligence and serene focus. Thin, ethereal lines of light trace geometric patterns across the frame, creating a layered, glassmorphic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmj-Kb4MH4tbCAjxwK7aOMn7aP7yfZHZxtUOvXE1kMGi36jWlaDs00Fj0Fver_5ky76jFMjY4niAjIBL-sXzQ17hLDDSofluGpOqWKAeYiQ72jhMqceHvqEQFw2FQjpv8xx8BNqHHuI13rRF4U6bh2jCylYr0JUNEXPVFsGetAo_h1P-yW_xevLkQJ4LzZVbhvivVymYMux3I-0vGRE0tKp-tQB5PsW5AoPNMcN-razuTXZSMb3grMUEA4e8_meX7EBrTfGc0K9Nbi"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6">
+<span class="bg-secondary-fixed-dim text-on-secondary px-2 py-1 rounded text-[10px] font-bold uppercase mb-2 inline-block">시스템 인사이트</span>
+<h4 class="text-white font-headline-md">어제 오전 2시 - 4시 사이에 집중 품질이 정점에 달했습니다.</h4>
+</div>
+</div>
+<!-- Bottom: Quick Actions/Goals -->
+<div class="md:col-span-12 bg-surface-container rounded-3xl p-8 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-primary">rocket_launch</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">더 큰 목표에 도전할 준비가 되셨나요?</h4>
+<p class="text-on-surface-variant mt-1">새로운 '큰 목표'를 정의하면 FocusFlow가 경로를 설계해 드립니다.</p>
+</div>
+</div>
+<div class="flex items-center gap-4 w-full md:w-auto mt-4 md:mt-0">
+<input class="bg-surface-container-high border-white/10 rounded-xl px-6 py-3 flex-grow md:w-80 text-on-surface focus:ring-2 focus:ring-secondary-fixed-dim focus:border-transparent transition-all" placeholder="다음에 하고 싶은 일은..." type="text"/>
+<button class="bg-secondary-fixed text-on-secondary-fixed font-bold px-8 py-3 rounded-xl hover:scale-105 transition-transform active:scale-95 whitespace-nowrap">목표 생성</button>
+</div>
+</div>
+</div>
+<!-- Footer Void -->
+<footer class="mt-20 py-12 border-t border-white/5 flex flex-col items-center gap-4 opacity-40">
+<p class="font-label-sm text-label-sm tracking-[0.2em] uppercase">FocusFlow v2.4.0</p>
+<div class="flex gap-8">
+<span class="material-symbols-outlined text-sm">security</span>
+<span class="material-symbols-outlined text-sm">sync</span>
+<span class="material-symbols-outlined text-sm">memory</span>
+</div>
+</footer>
+</div>
+</main>
+</div>
+<!-- Floating AI Bubble (Mobile only) -->
+<button class="md:hidden fixed bottom-8 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center z-50 animate-bounce active:scale-90">
+<span class="material-symbols-outlined" data-weight="fill">smart_toy</span>
+</button>
+<script>
+    // Simulating focus timer progression
+    const progressBar = document.querySelector('.bg-primary\\/20');
+    if (progressBar) {
+        setTimeout(() => {
+            progressBar.style.width = '82%';
+        }, 500);
+    }
+</script>
+</body></html>
