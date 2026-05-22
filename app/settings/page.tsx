@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileNav";
 
 export default function SettingsPage() {
-  const [profile, setProfile] = useState({
-    name: "Alex",
-    email: "alex@focusflow.ai",
-  });
+  const { data: session } = useSession();
 
   const [timerSettings, setTimerSettings] = useState({
     focusDuration: 25,
@@ -29,13 +27,11 @@ export default function SettingsPage() {
 
     try {
       const parsed = JSON.parse(saved) as {
-        profile?: typeof profile;
         timerSettings?: typeof timerSettings;
         theme?: "light" | "dark";
         soundEnabled?: boolean;
       };
 
-      if (parsed.profile) setProfile(parsed.profile);
       if (parsed.timerSettings) setTimerSettings(parsed.timerSettings);
       if (parsed.theme) setTheme(parsed.theme);
       if (typeof parsed.soundEnabled === "boolean") setSoundEnabled(parsed.soundEnabled);
@@ -49,7 +45,7 @@ export default function SettingsPage() {
     // 서버 사용자 계정이 붙기 전까지 설정은 브라우저에 저장합니다.
     window.localStorage.setItem(
       "focusflow-settings",
-      JSON.stringify({ profile, timerSettings, theme, soundEnabled }),
+      JSON.stringify({ timerSettings, theme, soundEnabled }),
     );
     setSaveMessage("설정이 이 브라우저에 저장되었습니다.");
   };
@@ -83,47 +79,34 @@ export default function SettingsPage() {
           <div className="glass-card p-6 rounded-xl">
             <h3 className="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">account_circle</span>
-              프로필 설정
+              연동된 Google 계정 정보
             </h3>
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="relative group flex-shrink-0">
+              <div className="flex-shrink-0">
                 <div className="w-24 h-24 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant">
                   <img
                     alt="User Profile Avatar"
                     className="w-full h-full object-cover"
-                    src="https://ui-avatars.com/api/?name=Alex&background=0041c8&color=fff"
+                    src={session?.user?.image ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(session?.user?.name ?? "User")}&background=0041c8&color=fff`}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => alert("프로필 이미지 수정 기능은 준비 중입니다.")}
-                  className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-semibold"
-                >
-                  변경
-                </button>
               </div>
               <div className="flex-1 w-full space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">
+                  <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5">
                     이름
-                  </label>
-                  <input
-                    className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                    type="text"
-                    value={profile.name}
-                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                  />
+                  </span>
+                  <div className="w-full max-w-md bg-surface-container-high/40 border border-outline-variant/40 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
+                    {session?.user?.name ?? "로그인 정보 없음"}
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">
+                  <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5">
                     이메일 주소
-                  </label>
-                  <input
-                    className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                    type="email"
-                    value={profile.email}
-                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                  />
+                  </span>
+                  <div className="w-full max-w-md bg-surface-container-high/40 border border-outline-variant/40 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
+                    {session?.user?.email ?? "계정 정보가 없습니다."}
+                  </div>
                 </div>
               </div>
             </div>

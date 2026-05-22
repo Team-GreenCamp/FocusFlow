@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import type { RoadmapGoal, RoadmapStep } from "@/types/roadmap";
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileNav";
@@ -39,6 +40,7 @@ function statusLabel(status: RoadmapStep["status"]) {
 
 export default function BreakdownPage() {
   const { status } = useSession();
+  const router = useRouter();
   const [goalInput, setGoalInput] = useState("");
   const [memo, setMemo] = useState("");
   const [goal, setGoal] = useState<RoadmapGoal | null>(null);
@@ -221,6 +223,7 @@ export default function BreakdownPage() {
         body: JSON.stringify({ memo, goalId: goal?.id }),
       });
       setReflection(data.reflection);
+      router.push(`/reflections/${data.reflection.id}`);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "업무 피드백 생성에 실패했습니다.");
     } finally {
@@ -553,7 +556,7 @@ export default function BreakdownPage() {
                 className="w-full min-h-28 resize-none rounded-lg border border-outline-variant bg-white/70 p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 value={memo}
                 onChange={(event) => setMemo(event.target.value)}
-                placeholder="예: 생각보다 DB 관계 정의가 어려웠고, 다음에는 먼저 엔티티 이름부터 고정해야겠다."
+                placeholder="팁: 오늘 업무를 진행하며 느낀 점, 아쉬웠던 부분, 또는 다음에 다르게 시도해볼 행동 개선안을 자유롭게 남겨보세요."
               />
               <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-on-surface-variant font-medium">
