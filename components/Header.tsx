@@ -35,16 +35,6 @@ export default function Header() {
             내 업무
           </Link>
           <Link
-            href="/insights"
-            className={`font-label-md text-label-md pb-1 p-1 rounded transition-colors ${
-              pathname === "/insights"
-                ? "text-primary font-bold border-b-2 border-primary"
-                : "text-on-surface-variant font-medium hover:bg-surface-container-low"
-            }`}
-          >
-            작업 피드백
-          </Link>
-          <Link
             href="/vault"
             className={`font-label-md text-label-md pb-1 p-1 rounded transition-colors ${
               pathname === "/vault"

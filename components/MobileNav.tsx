@@ -9,7 +9,6 @@ export default function MobileNav() {
   const menuItems = [
     { name: "구체화", path: "/breakdown", icon: "account_tree" },
     { name: "내 업무", path: "/work", icon: "checklist" },
-    { name: "피드백", path: "/insights", icon: "rate_review" },
     { name: "회고", path: "/vault", icon: "inventory_2" },
   ];
 

@@ -25,11 +25,11 @@ export default function Home() {
         {/* Landing Hero Section */}
         <section className="w-full text-center py-16 md:py-24 flex flex-col items-center justify-center border-b border-outline-variant/20 mb-16 relative">
           <h1 className="font-display-lg text-4xl md:text-6xl font-bold tracking-tight text-on-surface max-w-3xl leading-tight mb-6 break-keep">
-            뇌의 인지 과부하를 비우고 <br />
-            <span className="momentum-gradient">몰입의 흐름</span>에 올라타세요
+            <span className="momentum-gradient">생각</span>은 가볍게, <br />
+            <span className="momentum-gradient">실행</span>은 확실하게
           </h1>
           <p className="text-on-surface-variant font-body-lg text-lg md:text-xl max-w-2xl leading-relaxed mb-10 break-keep">
-            복잡하고 막연한 머릿속 업무 아이디어를 즉시 실행 가능한 마이크로 태스크로 세분화합니다. 집중을 유지하고 일일 회고 루프를 완성하세요.
+            복잡한 업무 아이디어를 바로 실행할 수 있는 작은 할 일로 나눠드립니다.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             <Link
@@ -40,7 +40,7 @@ export default function Home() {
             </Link>
             <Link
               href="/work"
-              className="px-8 py-4 bg-white/15 dark:bg-black/25 backdrop-blur-md border border-outline-variant/30 text-on-surface font-semibold rounded-xl hover:bg-white/20 transition-all hover:scale-105 active:scale-95 duration-200"
+              className="px-8 py-4 bg-white border border-outline-variant/30 text-on-surface font-semibold rounded-xl hover:bg-neutral-100 transition-all hover:scale-105 active:scale-95 duration-200"
             >
               내 업무 보기
             </Link>
