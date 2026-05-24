@@ -34,7 +34,6 @@ model TaskStep {
   order           Int
   title           String
   description     String
-  estimateMinutes Int
   status          TaskStatus  @default(LOCKED)
   completedAt     DateTime?
   memo            String?

@@ -11,12 +11,8 @@ const stepSchema = {
       type: Type.STRING,
       description: "이 단계를 완료하기 위해 해야 하는 구체적인 행동 설명",
     },
-    estimateMinutes: {
-      type: Type.INTEGER,
-      description: "예상 소요 시간. 분 단위 정수",
-    },
   },
-  required: ["title", "description", "estimateMinutes"],
+  required: ["title", "description"],
 };
 
 export const roadmapResponseSchema = {

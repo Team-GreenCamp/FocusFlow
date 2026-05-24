@@ -209,7 +209,7 @@ export default function VaultPage() {
                           </div>
                           <div className="flex justify-between items-center mt-3 text-xs text-on-surface-variant font-medium">
                             <span>전체 {goal.steps.length}단계 중 {completed}단계 완료</span>
-                            <Link href={`/?goalId=${goal.id}`} className="text-primary hover:underline flex items-center gap-1 font-bold">
+                            <Link href={`/roadmaps/${goal.id}`} className="text-primary hover:underline flex items-center gap-1 font-bold">
                               <span className="material-symbols-outlined text-[14px]">autorenew</span>
                               다시 검토
                             </Link>

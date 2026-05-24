@@ -39,10 +39,10 @@ export default function Home() {
               지금 시작하기
             </Link>
             <Link
-              href="/deep-work"
+              href="/work"
               className="px-8 py-4 bg-white/15 dark:bg-black/25 backdrop-blur-md border border-outline-variant/30 text-on-surface font-semibold rounded-xl hover:bg-white/20 transition-all hover:scale-105 active:scale-95 duration-200"
             >
-              실행 기록 보기
+              내 업무 보기
             </Link>
           </div>
         </section>
@@ -63,9 +63,9 @@ export default function Home() {
             <div className="w-12 h-12 rounded-xl bg-secondary/15 flex items-center justify-center mb-6">
               <span className="material-symbols-outlined text-secondary text-2xl">bolt</span>
             </div>
-            <h3 className="text-xl font-bold text-on-surface mb-3">몰입형 뽀모도로</h3>
+            <h3 className="text-xl font-bold text-on-surface mb-3">내 업무 대시보드</h3>
             <p className="text-on-surface-variant text-sm leading-relaxed break-keep">
-              한 번에 단 하나의 구체화된 업무에만 오롯이 몰입하도록 유도하며, 인지 상태를 최적으로 유지해주는 집중 타겟 가이드를 제공합니다.
+              현재 진행 가능한 업무와 캘린더 일정을 한 화면에 모아 다음에 처리할 일을 빠르게 판단할 수 있게 합니다.
             </p>
           </div>
 

@@ -3,7 +3,6 @@ import { z } from "zod";
 export const taskStepOutputSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  estimateMinutes: z.coerce.number().int().min(5).max(240),
 });
 
 export const roadmapOutputSchema = z.object({
@@ -11,7 +10,7 @@ export const roadmapOutputSchema = z.object({
 });
 
 export const breakdownOutputSchema = z.object({
-  steps: z.array(taskStepOutputSchema.extend({ estimateMinutes: z.coerce.number().int().min(5).max(20) })).min(2).max(6),
+  steps: z.array(taskStepOutputSchema).min(2).max(6),
 });
 
 export const reflectionOutputSchema = z.object({
@@ -31,7 +30,6 @@ export type RoadmapStep = {
   order: number;
   title: string;
   description: string;
-  estimateMinutes: number;
   status: TaskStatus;
   completedAt: string | null;
   memo: string | null;

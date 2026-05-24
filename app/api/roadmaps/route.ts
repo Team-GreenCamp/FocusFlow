@@ -27,25 +27,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    const body = (await request.json()) as { goal?: string };
+    const body = (await request.json()) as { goal?: string; context?: string; source?: string };
     const goalTitle = body.goal?.trim();
+    const goalContext = body.context?.trim();
 
     if (!goalTitle) {
       return NextResponse.json({ error: "구체화할 업무를 입력해 주세요." }, { status: 400 });
     }
 
-    const roadmap = await generateRoadmap(goalTitle);
+    const roadmap = await generateRoadmap(goalTitle, goalContext);
 
     // 검증된 AI 결과만 트랜잭션으로 저장합니다.
     const goal = await prisma.goal.create({
       data: {
         userId,
         title: goalTitle,
+        description: goalContext || null,
         steps: {
           create: roadmap.steps.map((step, index) => ({
             title: step.title,
             description: step.description,
-            estimateMinutes: step.estimateMinutes,
             order: index,
             status: index === 0 ? TaskStatus.ACTIVE : TaskStatus.LOCKED,
           })),

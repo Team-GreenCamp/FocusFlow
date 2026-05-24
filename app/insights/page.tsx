@@ -2,21 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { signIn } from "next-auth/react";
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileNav";
 import type { ReflectionSummary, RoadmapGoal } from "@/types/roadmap";
-
-type CalendarEventSummary = {
-  id: string;
-  title: string;
-  description: string | null;
-  location: string | null;
-  htmlLink: string | null;
-  start: string | null;
-  end: string | null;
-  allDay: boolean;
-};
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("ko-KR", {
@@ -26,44 +14,115 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-function formatEventTime(event: CalendarEventSummary) {
-  if (!event.start) {
-    return "시간 없음";
+interface ParsedSection {
+  title: string;
+  items: string[];
+}
+
+function parseMarkdown(md: string) {
+  const sections: ParsedSection[] = [];
+  const lines = md.split("\n");
+  let currentSection: ParsedSection | null = null;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // 헤더 매칭 (H1, H2, H3, H4 등 #으로 시작하는 행)
+    if (trimmed.startsWith("#")) {
+      const titleText = trimmed.replace(/^#+\s*/, "").trim();
+      
+      // "회고" 성격의 문서 전체 제목(H1/H2 등)은 메인 레이아웃 타이틀로 가므로 개별 섹션에서는 제외합니다.
+      const isGlobalTitle = 
+        trimmed.startsWith("# ") || 
+        (titleText.includes("회고") && (trimmed.startsWith("## ") || titleText.endsWith("회고")));
+
+      if (isGlobalTitle) {
+        continue;
+      }
+
+      if (currentSection) {
+        sections.push(currentSection);
+      }
+      
+      const cleanedTitle = titleText
+        .replace(/^[\p{Emoji}\u2000-\u2BFF\s]+/gu, "") // 이모지 제거
+        .replace(/^#?\s*/, "") // 남은 샵 기호 제거
+        .replace(/^\d+\.\s*/, "") // 리스트 번호 제거
+        .trim();
+
+      currentSection = {
+        title: cleanedTitle,
+        items: []
+      };
+      continue;
+    }
+
+    // 목록 항목 또는 일반 단락 매칭
+    if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
+      if (currentSection) {
+        currentSection.items.push(trimmed.replace(/^[-*]\s*/, "").trim());
+      }
+    } else {
+      if (currentSection) {
+        currentSection.items.push(trimmed);
+      }
+    }
   }
 
-  const start = new Date(event.start);
-  if (event.allDay) {
-    return new Intl.DateTimeFormat("ko-KR", {
-      month: "short",
-      day: "numeric",
-    }).format(start);
+  if (currentSection) {
+    sections.push(currentSection);
   }
 
-  return new Intl.DateTimeFormat("ko-KR", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(start);
+  return sections;
+}
+
+function getSectionStyle(title: string) {
+  const t = title.toLowerCase();
+  if (t.includes("완료") || t.includes("수행") || t.includes("성공")) {
+    return {
+      bg: "bg-emerald-500/5 dark:bg-emerald-500/10",
+      border: "border-emerald-500/20 dark:border-emerald-500/30",
+      icon: "check_circle",
+      iconColor: "text-emerald-500",
+      accentLine: "bg-emerald-500",
+    };
+  }
+  if (t.includes("잘된") || t.includes("장점") || t.includes("칭찬") || t.includes("만족") || t.includes("피드백") || t.includes("반영")) {
+    return {
+      bg: "bg-sky-500/5 dark:bg-sky-500/10",
+      border: "border-sky-500/20 dark:border-sky-500/30",
+      icon: "auto_awesome",
+      iconColor: "text-sky-500",
+      accentLine: "bg-sky-500",
+    };
+  }
+  // 개선할 점 / 아쉬운 점 / 기타
+  return {
+    bg: "bg-amber-500/5 dark:bg-amber-500/10",
+    border: "border-amber-500/20 dark:border-amber-500/30",
+    icon: "lightbulb",
+    iconColor: "text-amber-500",
+    accentLine: "bg-amber-500",
+  };
 }
 
 export default function InsightsPage() {
   const [goals, setGoals] = useState<RoadmapGoal[]>([]);
   const [reflections, setReflections] = useState<ReflectionSummary[]>([]);
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEventSummary[]>([]);
   const [error, setError] = useState("");
-  const [calendarError, setCalendarError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     let ignore = false;
 
     async function loadInsightData() {
       try {
-        const [goalsResponse, reflectionsResponse, calendarResponse] = await Promise.all([
+        // 피드백 화면은 완료 업무와 회고 기록만 다루도록 캘린더 의존성을 분리합니다.
+        const [goalsResponse, reflectionsResponse] = await Promise.all([
           fetch("/api/roadmaps"),
           fetch("/api/reflections"),
-          fetch("/api/calendar/events"),
         ]);
 
         if (!goalsResponse.ok || !reflectionsResponse.ok) {
@@ -72,18 +131,10 @@ export default function InsightsPage() {
 
         const goalsData = (await goalsResponse.json()) as { goals: RoadmapGoal[] };
         const reflectionsData = (await reflectionsResponse.json()) as { reflections: ReflectionSummary[] };
-        const calendarData = (await calendarResponse.json()) as { events?: CalendarEventSummary[]; error?: string };
 
         if (!ignore) {
           setGoals(goalsData.goals);
           setReflections(reflectionsData.reflections);
-          if (calendarResponse.ok) {
-            setCalendarEvents(calendarData.events ?? []);
-            setCalendarError("");
-          } else {
-            setCalendarEvents([]);
-            setCalendarError(calendarData.error ?? "Google Calendar 일정을 불러오지 못했습니다.");
-          }
         }
       } catch (requestError) {
         if (!ignore) {
@@ -104,7 +155,6 @@ export default function InsightsPage() {
   }, []);
 
   const latestGoal = goals[0] ?? null;
-  const latestReflection = reflections[0] ?? null;
   const completedSteps = useMemo(
     () => goals.flatMap((goal) => goal.steps.filter((step) => step.status === "DONE")),
     [goals],
@@ -116,19 +166,6 @@ export default function InsightsPage() {
   const completionRate = latestGoal?.steps.length
     ? Math.round((latestGoal.steps.filter((step) => step.status === "DONE").length / latestGoal.steps.length) * 100)
     : 0;
-
-  const reconnectCalendar = () => {
-    signIn(
-      "google",
-      { callbackUrl: "/insights" },
-      {
-        prompt: "consent",
-        access_type: "offline",
-        response_type: "code",
-        scope: "openid email profile https://www.googleapis.com/auth/calendar.readonly",
-      },
-    );
-  };
 
   return (
     <div className="bg-surface text-on-surface min-h-screen">
@@ -180,7 +217,7 @@ export default function InsightsPage() {
               </div>
               <div className="flex gap-3 z-10 mt-6">
                 <Link
-                  href="/"
+                  href="/breakdown"
                   className="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95"
                 >
                   업무 구체화로 이동
@@ -197,22 +234,103 @@ export default function InsightsPage() {
             <div className="bg-surface-container rounded-3xl p-6 border border-outline-variant/30 shadow-sm">
               <div className="flex justify-between items-center mb-6">
                 <h4 className="font-headline-md text-headline-md text-on-surface">최근 회고 피드백</h4>
-                <span className="bg-surface-container-highest px-3 py-1 rounded-full text-xs font-semibold text-on-surface">
-                  {latestReflection ? formatDate(latestReflection.createdAt) : "기록 없음"}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="bg-primary/10 px-3 py-1 rounded-full text-xs font-bold text-primary">
+                    {formatDate(new Date().toISOString())}
+                  </span>
+                  <span className="bg-secondary/10 px-3 py-1 rounded-full text-xs font-bold text-secondary">
+                    총 {reflections.length}개
+                  </span>
+                </div>
               </div>
 
-              {latestReflection ? (
-                <div className="space-y-4">
-                  <div className="rounded-2xl bg-surface-container-lowest p-4 border border-outline-variant/30">
-                    <p className="text-xs text-primary font-bold mb-2">
-                      {latestReflection.goalTitle ?? "독립 회고"}
-                    </p>
-                    <p className="text-sm text-on-surface-variant leading-6">{latestReflection.memo}</p>
-                  </div>
-                  <pre className="max-h-72 overflow-auto whitespace-pre-wrap rounded-2xl bg-inverse-surface p-4 font-code text-code text-inverse-on-surface">
-                    {latestReflection.markdown}
-                  </pre>
+              {reflections.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  {reflections.map((ref) => {
+                    const isExpanded = expandedId === ref.id;
+                    return (
+                      <div
+                        key={ref.id}
+                        onClick={() => setExpandedId(isExpanded ? null : ref.id)}
+                        className={`block rounded-2xl bg-white/60 dark:bg-surface-container-low/40 p-5 border transition-all duration-300 group cursor-pointer ${
+                          isExpanded
+                            ? "border-primary/50 shadow-md ring-1 ring-primary/20"
+                            : "border-outline-variant/30 hover:border-primary/40 hover:shadow-md"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4 mb-2">
+                          <span className="text-sm font-bold text-primary group-hover:text-primary/80 transition-colors">
+                            {ref.goalTitle ?? "일반 회고"}
+                          </span>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-xs text-on-surface-variant font-medium">
+                              {formatDate(ref.createdAt)}
+                            </span>
+                            <span className="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-300 group-hover:text-primary">
+                              {isExpanded ? "expand_less" : "expand_more"}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-body-md text-on-surface leading-relaxed font-medium">
+                          {ref.memo || "작성한 회고 메모가 없습니다."}
+                        </p>
+
+                        {isExpanded && (
+                          <div className="mt-4 pt-4 border-t border-outline-variant/20" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex flex-col gap-3 max-h-96 overflow-y-auto pr-1">
+                              {parseMarkdown(ref.markdown).map((section, idx) => {
+                                const style = getSectionStyle(section.title);
+                                return (
+                                  <div 
+                                    key={idx} 
+                                    className={`relative overflow-hidden rounded-xl border ${style.border} ${style.bg} p-4 transition-all duration-300`}
+                                  >
+                                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${style.accentLine}`} />
+                                    
+                                    <div className="flex items-center gap-1.5 mb-2 pl-1">
+                                      <span className={`material-symbols-outlined ${style.iconColor} text-[18px]`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                                        {style.icon}
+                                      </span>
+                                      <h5 className="font-bold text-on-surface text-sm">
+                                        {section.title}
+                                      </h5>
+                                    </div>
+
+                                    {section.items.length === 0 ? (
+                                      <p className="text-xs text-on-surface-variant pl-6">기록된 항목이 없습니다.</p>
+                                    ) : (
+                                      <ul className="space-y-1.5 pl-1">
+                                        {section.items.map((item, itemIdx) => (
+                                          <li key={itemIdx} className="flex items-start gap-2 text-xs md:text-sm text-on-surface-variant leading-relaxed">
+                                            <span className={`${style.iconColor} text-xs mt-0.5 shrink-0`}>•</span>
+                                            <span>{item}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            <div className="mt-3.5 flex justify-between items-center">
+                              <span className="text-[11px] text-on-surface-variant">
+                                상세 리포트와 분석 결과가 포함되어 있습니다.
+                              </span>
+                              <Link
+                                href={`/reflections/${ref.id}`}
+                                className="inline-flex items-center gap-1 text-xs text-secondary font-bold hover:underline"
+                              >
+                                <span>상세 피드백 리포트 페이지로 이동</span>
+                                <span className="material-symbols-outlined text-[14px]">
+                                  open_in_new
+                                </span>
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-outline-variant/30 p-8 text-center text-sm text-on-surface-variant">
@@ -230,7 +348,7 @@ export default function InsightsPage() {
                     <div className="absolute left-[13px] top-2 w-2.5 h-2.5 bg-primary rounded-full ring-4 ring-primary/20 group-hover:scale-125 transition-transform" />
                     <div className="flex flex-col gap-0.5">
                       <span className="text-xs text-secondary font-bold tracking-tighter uppercase">
-                        {step.status === "ACTIVE" ? "진행 가능" : "완료됨"} · {step.estimateMinutes}분
+                        {step.status === "ACTIVE" ? "진행 가능" : "완료됨"}
                       </span>
                       <h5 className="text-on-surface font-semibold group-hover:text-primary transition-colors text-sm">
                         {index + 1}. {step.title}
@@ -247,55 +365,6 @@ export default function InsightsPage() {
               </div>
             </div>
 
-            <div className="bg-surface-container rounded-3xl p-6 border border-outline-variant/30 shadow-sm">
-              <div className="flex items-center justify-between gap-4 mb-5">
-                <h4 className="font-headline-md text-headline-md text-on-surface">다가오는 캘린더 일정</h4>
-                <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">
-                  7일 내 {calendarEvents.length}개
-                </span>
-              </div>
-
-              {calendarError ? (
-                <div className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm leading-6 text-on-surface-variant">
-                  {calendarError}
-                  <br />
-                  캘린더 권한을 새로 승인하려면 로그아웃 후 Google 로그인을 다시 진행해 주세요.
-                  <button
-                    type="button"
-                    onClick={reconnectCalendar}
-                    className="mt-4 block rounded-lg bg-primary px-4 py-2 text-xs font-bold text-white transition hover:bg-primary-container hover:text-on-primary-container"
-                  >
-                    Google Calendar 권한 다시 승인
-                  </button>
-                </div>
-              ) : calendarEvents.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm text-on-surface-variant">
-                  앞으로 7일 안에 표시할 일정이 없습니다.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {calendarEvents.map((event) => (
-                    <a
-                      key={event.id}
-                      href={event.htmlLink ?? undefined}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block rounded-2xl bg-surface-container-lowest p-4 border border-outline-variant/30 hover:border-primary/40 transition-colors"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="text-sm font-bold text-on-surface">{event.title}</p>
-                          {event.location ? (
-                            <p className="mt-1 text-xs text-on-surface-variant">{event.location}</p>
-                          ) : null}
-                        </div>
-                        <span className="shrink-0 text-xs font-bold text-primary">{formatEventTime(event)}</span>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         )}
       </main>

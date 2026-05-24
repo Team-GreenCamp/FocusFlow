@@ -2,12 +2,31 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function LoginPage() {
   const { status } = useSession();
   const router = useRouter();
+  const [guestLoading, setGuestLoading] = useState(false);
+
+  const handleGuestLogin = async () => {
+    try {
+      setGuestLoading(true);
+      const res = await fetch("/api/auth/guest", { method: "POST" });
+      if (res.ok) {
+        router.replace("/");
+        router.refresh();
+      } else {
+        alert("게스트 로그인에 실패했습니다. 다시 시도해 주세요.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("네트워크 오류가 발생했습니다.");
+    } finally {
+      setGuestLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -77,6 +96,18 @@ export default function LoginPage() {
               />
             </svg>
             <span>Google 계정으로 로그인</span>
+          </button>
+
+          {/* 게스트 로그인 버튼 */}
+          <button
+            onClick={handleGuestLogin}
+            disabled={guestLoading}
+            className="mt-3 flex items-center justify-center gap-2 w-full max-w-sm h-11 px-6 font-medium text-sm text-on-surface-variant bg-surface-container border border-outline-variant/30 rounded-lg shadow-sm hover:bg-surface-container-high hover:border-outline-variant active:scale-98 transition-all disabled:opacity-50"
+          >
+            <span className="material-symbols-outlined text-[18px]">
+              person_outline
+            </span>
+            <span>{guestLoading ? "게스트 계정 준비 중..." : "게스트 모드로 간편 체험하기"}</span>
           </button>
 
           <Link href="/" className="mt-6 text-xs text-on-surface-variant hover:text-primary transition-colors underline">

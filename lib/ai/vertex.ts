@@ -77,7 +77,7 @@ async function generateStructured<T>(
   return parsed.data;
 }
 
-export async function generateRoadmap(goal: string): Promise<RoadmapOutput> {
+export async function generateRoadmap(goal: string, context?: string): Promise<RoadmapOutput> {
   if (shouldUseMock()) {
     return mockRoadmap(goal);
   }
@@ -86,8 +86,10 @@ export async function generateRoadmap(goal: string): Promise<RoadmapOutput> {
     [
       "당신은 추상적인 업무를 구체적인 실행 단위로 바꾸는 업무 분석 코치입니다.",
       "상위 업무를 완료 조건이 분명한 실행 단계로 나누고 논리적 의존 순서대로 정렬하세요.",
-      "각 단계는 제목, 구체적 설명, 예상 소요 시간(분)을 포함해야 합니다.",
+      "각 단계는 제목과 구체적 설명만 포함해야 하며, 시간 추정이나 분 단위 표현은 작성하지 마세요.",
+      "너무 크고 무거운 단계가 필요해 보인다면 완료 여부를 판단할 수 있는 더 작은 실행 단계로 나누어 제안하세요.",
       `상위 업무: ${goal}`,
+      context ? `업무 맥락: ${context}` : "",
     ].join("\n"),
     roadmapResponseSchema,
     roadmapOutputSchema,
@@ -105,8 +107,8 @@ export async function generateBreakdown(input: {
 
   return generateStructured(
     [
-      "아래 업무 단계를 5~10분 단위의 더 구체적인 실행 지침으로 다시 나누세요.",
-      "estimateMinutes는 반드시 5, 10, 15 중 하나의 정수로만 작성하세요.",
+      "아래 업무 단계를 더 구체적인 실행 지침으로 다시 나누세요.",
+      "각 하위 단계는 제목과 구체적 설명만 포함해야 하며, 시간 추정이나 분 단위 표현은 작성하지 마세요.",
       "기존 업무 맥락을 유지하고, 완료 여부를 판단할 수 있는 행동만 작성하세요.",
       `상위 업무: ${input.goalTitle}`,
       `현재 단계: ${input.stepTitle}`,

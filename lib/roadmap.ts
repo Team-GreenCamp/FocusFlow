@@ -36,7 +36,6 @@ export function serializeGoal(goal: {
       order: step.order,
       title: step.title,
       description: step.description,
-      estimateMinutes: step.estimateMinutes,
       status: step.status,
       completedAt: step.completedAt?.toISOString() ?? null,
       memo: step.memo,

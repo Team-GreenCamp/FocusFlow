@@ -8,11 +8,11 @@ import MobileNav from "@/components/MobileNav";
 export default function SettingsPage() {
   const { data: session } = useSession();
 
-  const [timerSettings, setTimerSettings] = useState({
-    focusDuration: 25,
-    shortBreak: 5,
-    longBreak: 15,
-    targetSessions: 5,
+  const [workViewSettings, setWorkViewSettings] = useState({
+    calendarDays: 7,
+    visibleActiveTasks: 5,
+    visibleCalendarEvents: 10,
+    visibleCompletedTasks: 5,
   });
 
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -27,12 +27,12 @@ export default function SettingsPage() {
 
     try {
       const parsed = JSON.parse(saved) as {
-        timerSettings?: typeof timerSettings;
+        workViewSettings?: typeof workViewSettings;
         theme?: "light" | "dark";
         soundEnabled?: boolean;
       };
 
-      if (parsed.timerSettings) setTimerSettings(parsed.timerSettings);
+      if (parsed.workViewSettings) setWorkViewSettings(parsed.workViewSettings);
       if (parsed.theme) setTheme(parsed.theme);
       if (typeof parsed.soundEnabled === "boolean") setSoundEnabled(parsed.soundEnabled);
     } catch {
@@ -45,7 +45,7 @@ export default function SettingsPage() {
     // 서버 사용자 계정이 붙기 전까지 설정은 브라우저에 저장합니다.
     window.localStorage.setItem(
       "focusflow-settings",
-      JSON.stringify({ timerSettings, theme, soundEnabled }),
+      JSON.stringify({ workViewSettings, theme, soundEnabled }),
     );
     setSaveMessage("설정이 이 브라우저에 저장되었습니다.");
   };
@@ -112,75 +112,73 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Timer Config Section */}
+          {/* Work View Config Section */}
           <div className="glass-card p-6 rounded-xl">
             <h3 className="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">timer</span>
-              업무 기록 시간 설정
+              <span className="material-symbols-outlined text-primary">dashboard</span>
+              내 업무 화면 설정
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">
-                  1회 업무 기록 시간 (분)
+                  캘린더 조회 기간 (일)
                 </label>
                 <select
                   className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                  value={timerSettings.focusDuration}
+                  value={workViewSettings.calendarDays}
                   onChange={(e) =>
-                    setTimerSettings({ ...timerSettings, focusDuration: parseInt(e.target.value) })
+                    setWorkViewSettings({ ...workViewSettings, calendarDays: parseInt(e.target.value) })
                   }
                 >
-                  <option value={15}>15분</option>
-                  <option value={25}>25분 (기본)</option>
-                  <option value={30}>30분</option>
-                  <option value={45}>45분</option>
-                  <option value={50}>50분</option>
+                  <option value={3}>3일</option>
+                  <option value={7}>7일 (기본)</option>
+                  <option value={14}>14일</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">
-                  짧은 휴식 시간 (분)
+                  진행 중 작업 표시 수
                 </label>
                 <select
                   className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                  value={timerSettings.shortBreak}
+                  value={workViewSettings.visibleActiveTasks}
                   onChange={(e) =>
-                    setTimerSettings({ ...timerSettings, shortBreak: parseInt(e.target.value) })
+                    setWorkViewSettings({ ...workViewSettings, visibleActiveTasks: parseInt(e.target.value) })
                   }
                 >
-                  <option value={3}>3분</option>
-                  <option value={5}>5분 (기본)</option>
-                  <option value={10}>10분</option>
+                  <option value={3}>3개</option>
+                  <option value={5}>5개 (기본)</option>
+                  <option value={10}>10개</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">
-                  긴 휴식 시간 (분)
+                  캘린더 일정 표시 수
                 </label>
                 <select
                   className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                  value={timerSettings.longBreak}
+                  value={workViewSettings.visibleCalendarEvents}
                   onChange={(e) =>
-                    setTimerSettings({ ...timerSettings, longBreak: parseInt(e.target.value) })
+                    setWorkViewSettings({ ...workViewSettings, visibleCalendarEvents: parseInt(e.target.value) })
                   }
                 >
-                  <option value={15}>15분 (기본)</option>
-                  <option value={20}>20분</option>
-                  <option value={30}>30분</option>
+                  <option value={5}>5개</option>
+                  <option value={10}>10개 (기본)</option>
+                  <option value={20}>20개</option>
                 </select>
               </div>
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">
-                  하루 기준 기록 수
+                  완료 업무 표시 수
                 </label>
                 <input
                   className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   type="number"
                   min="1"
-                  max="12"
-                  value={timerSettings.targetSessions}
+                  max="20"
+                  value={workViewSettings.visibleCompletedTasks}
                   onChange={(e) =>
-                    setTimerSettings({ ...timerSettings, targetSessions: parseInt(e.target.value) })
+                    setWorkViewSettings({ ...workViewSettings, visibleCompletedTasks: parseInt(e.target.value) })
                   }
                 />
               </div>

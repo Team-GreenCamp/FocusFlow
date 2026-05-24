@@ -8,7 +8,7 @@ export default function MobileNav() {
 
   const menuItems = [
     { name: "구체화", path: "/breakdown", icon: "account_tree" },
-    { name: "타이머", path: "/deep-work", icon: "checklist" },
+    { name: "내 업무", path: "/work", icon: "checklist" },
     { name: "피드백", path: "/insights", icon: "rate_review" },
     { name: "회고", path: "/vault", icon: "inventory_2" },
   ];
@@ -16,7 +16,7 @@ export default function MobileNav() {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant flex justify-around items-center h-16 z-50">
       {menuItems.map((item) => {
-        const isActive = pathname === item.path;
+        const isActive = pathname === item.path || (item.path === "/breakdown" && pathname.startsWith("/roadmaps/"));
         return (
           <Link
             key={item.name}

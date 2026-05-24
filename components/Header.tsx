@@ -17,7 +17,7 @@ export default function Header() {
           <Link
             href="/breakdown"
             className={`font-label-md text-label-md pb-1 p-1 rounded transition-colors ${
-              pathname === "/breakdown"
+              pathname === "/breakdown" || pathname.startsWith("/roadmaps/")
                 ? "text-primary font-bold border-b-2 border-primary"
                 : "text-on-surface-variant font-medium hover:bg-surface-container-low"
             }`}
@@ -25,14 +25,14 @@ export default function Header() {
             업무 구체화
           </Link>
           <Link
-            href="/deep-work"
+            href="/work"
             className={`font-label-md text-label-md pb-1 p-1 rounded transition-colors ${
-              pathname === "/deep-work"
+              pathname === "/work"
                 ? "text-primary font-bold border-b-2 border-primary"
                 : "text-on-surface-variant font-medium hover:bg-surface-container-low"
             }`}
           >
-            집중 타이머
+            내 업무
           </Link>
           <Link
             href="/insights"

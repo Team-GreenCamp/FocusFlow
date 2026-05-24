@@ -40,7 +40,6 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
         order: index,
         title: child.title,
         description: child.description,
-        estimateMinutes: child.estimateMinutes,
         status: index === 0 ? TaskStatus.ACTIVE : TaskStatus.LOCKED,
       })),
     });

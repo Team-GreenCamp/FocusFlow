@@ -9,7 +9,7 @@ export default function Sidebar() {
 
   const menuItems = [
     { name: "업무 구체화", path: "/breakdown", icon: "account_tree" },
-    { name: "집중 타이머", path: "/deep-work", icon: "checklist" },
+    { name: "내 업무", path: "/work", icon: "checklist" },
     { name: "작업 피드백", path: "/insights", icon: "rate_review" },
     { name: "회고 보관소", path: "/vault", icon: "inventory_2" },
     { name: "설정", path: "/settings", icon: "settings" },
