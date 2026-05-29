@@ -417,6 +417,9 @@ export default function Home() {
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
                 onToday={handleToday}
+                onOpenCreateModal={openCreateEventModal}
+                onDeleteEvent={deleteCalendarEvent}
+                formatTime={formatTime}
               />
 
               {/* 우측 (4열 배정): 선택 일정 타임라인 및 몰입 할일 목록 */}

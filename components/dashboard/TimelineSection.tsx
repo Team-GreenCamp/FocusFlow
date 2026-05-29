@@ -19,7 +19,7 @@ export default function TimelineSection({
   formatTime,
 }: TimelineSectionProps) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="hidden md:flex flex-col gap-3">
       <h3 className="font-headline-sm text-base font-bold text-on-surface flex items-center gap-1.5 pl-1">
         <span className="material-symbols-outlined text-secondary text-lg">event_available</span>
         {formattedSelectedDate}

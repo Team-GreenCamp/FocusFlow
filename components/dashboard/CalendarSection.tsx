@@ -19,6 +19,9 @@ type CalendarSectionProps = {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onToday: () => void;
+  onOpenCreateModal?: () => void;
+  onDeleteEvent?: (eventId: string, eventTitle: string) => void;
+  formatTime?: (isoString: string | null, allDay: boolean) => string;
 };
 
 export default function CalendarSection({
@@ -31,7 +34,32 @@ export default function CalendarSection({
   onPrevMonth,
   onNextMonth,
   onToday,
+  onOpenCreateModal,
+  onDeleteEvent,
+  formatTime,
 }: CalendarSectionProps) {
+  // 요일 텍스트를 한글로 변환하는 헬퍼 함수
+  const getKoreanDayOfWeek = (dateStr: string) => {
+    const days = ["일", "월", "화", "수", "목", "금", "토"];
+    const dayIndex = new Date(dateStr).getDay();
+    return days[dayIndex];
+  };
+
+  // 날짜 형식화 텍스트 생성 (예: 5월 29일 (금))
+  const getFormattedDateText = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일 (${getKoreanDayOfWeek(dateStr)})`;
+  };
+
+  // 모바일 뷰용: 이번 달 날짜 중에서 일정이 있거나 오늘이거나 현재 선택된 날만 필터링
+  const activeDateCells = calendarCells.filter((cell) => {
+    if (!cell.isCurrentMonth) return false;
+    const dayEvents = eventsByDate[cell.dateStr] ?? [];
+    const isToday = cell.dateStr === todayStr;
+    const isSelected = cell.dateStr === selectedDateStr;
+    return dayEvents.length > 0 || isToday || isSelected;
+  });
+
   return (
     <div className="lg:col-span-8 flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-1">
@@ -82,8 +110,8 @@ export default function CalendarSection({
         </div>
       </div>
 
-      {/* 실제 달력 그리드 카드 */}
-      <div className="glass-card p-5 rounded-3xl border border-outline-variant/20 shadow-md">
+      {/* 데스크톱 달력 그리드 카드 (md 이상 화면) */}
+      <div className="hidden md:block glass-card p-5 rounded-3xl border border-outline-variant/20 shadow-md">
         {/* 요일 헤더 */}
         <div className="grid grid-cols-7 gap-1 text-center font-bold text-xs text-outline mb-2.5">
           <div className="text-error/85 py-1">일</div>
@@ -154,6 +182,163 @@ export default function CalendarSection({
             );
           })}
         </div>
+      </div>
+
+      {/* 모바일 간략화 캘린더 뷰 (md 미만 화면) */}
+      <div className="block md:hidden flex flex-col gap-2">
+        {activeDateCells.length === 0 ? (
+          <div className="glass-card p-8 rounded-2xl text-center flex flex-col items-center justify-center border border-outline-variant/10">
+            <span className="material-symbols-outlined text-outline/50 text-4xl mb-2">calendar_today</span>
+            <p className="text-on-surface-variant text-sm font-medium">이번 달에는 등록된 일정이 없습니다.</p>
+            {onOpenCreateModal && (
+              <button
+                onClick={onOpenCreateModal}
+                className="mt-4 px-4 py-2 bg-primary text-white font-bold rounded-xl shadow text-xs hover:bg-primary/95 transition-all"
+                type="button"
+              >
+                첫 일정 등록하기
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {activeDateCells.map((cell) => {
+              const isSelected = cell.dateStr === selectedDateStr;
+              const isToday = cell.dateStr === todayStr;
+              const dayEvents = eventsByDate[cell.dateStr] ?? [];
+              const dayOfWeek = new Date(cell.dateStr).getDay();
+              const dateText = getFormattedDateText(cell.dateStr);
+
+              return (
+                <div
+                  key={cell.dateStr}
+                  className={`glass-card border rounded-2xl overflow-hidden transition-all duration-200 ${
+                    isSelected
+                      ? "border-primary/50 ring-1 ring-primary/30 shadow-md bg-primary/5"
+                      : isToday
+                      ? "border-secondary/40 bg-secondary/5"
+                      : "border-outline-variant/10 bg-surface-container-lowest/10 hover:border-primary/20"
+                  }`}
+                >
+                  {/* 요약 헤더 (클릭 시 토글) */}
+                  <div
+                    onClick={() => onSelectDate(cell.dateStr)}
+                    className="flex items-center justify-between p-4 cursor-pointer select-none"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span
+                        className={`text-sm font-extrabold w-6 h-6 flex items-center justify-center rounded-full ${
+                          isToday
+                            ? "bg-secondary text-on-secondary shadow-sm"
+                            : dayOfWeek === 0
+                            ? "text-error"
+                            : dayOfWeek === 6
+                            ? "text-primary"
+                            : "text-on-surface"
+                        }`}
+                      >
+                        {cell.day}
+                      </span>
+                      <span className="text-sm font-bold text-on-surface">{dateText}</span>
+                      {isToday && (
+                        <span className="text-[10px] font-bold bg-secondary/15 text-secondary px-2 py-0.5 rounded-full">
+                          오늘
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {dayEvents.length > 0 ? (
+                        <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[12px] font-bold" style={{ fontVariationSettings: "'FILL' 1" }}>event</span>
+                          {dayEvents.length}개
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-outline font-medium">일정 없음</span>
+                      )}
+                      <span
+                        className={`material-symbols-outlined text-outline transition-transform duration-200 ${
+                          isSelected ? "rotate-180 text-primary" : ""
+                        }`}
+                      >
+                        keyboard_arrow_down
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 클릭 시 노출될 상세 정보 (아코디언) */}
+                  {isSelected && (
+                    <div className="border-t border-outline-variant/15 bg-surface-container-lowest/30 p-4 flex flex-col gap-3">
+                      {dayEvents.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-4 text-center">
+                          <span className="material-symbols-outlined text-outline/50 text-2xl mb-1.5">calendar_today</span>
+                          <p className="text-on-surface-variant text-[11px] leading-relaxed">
+                            등록된 구글 캘린더 일정이 없습니다.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto pr-0.5">
+                          {dayEvents.map((event) => (
+                            <div
+                              key={event.id}
+                              className="p-3 rounded-xl bg-surface-container-high/50 border border-outline-variant/15 hover:border-primary/20 transition-all flex flex-col gap-1"
+                            >
+                              <div className="flex items-start justify-between gap-1">
+                                <h5 className="font-bold text-xs text-on-surface line-clamp-1">{event.title}</h5>
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  {formatTime && (
+                                    <span className="text-[9px] font-semibold text-primary bg-primary/5 px-2 py-0.5 rounded-full">
+                                      {formatTime(event.start, event.allDay)}
+                                    </span>
+                                  )}
+                                  {onDeleteEvent && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDeleteEvent(event.id, event.title);
+                                      }}
+                                      className="text-on-surface-variant hover:text-error transition-colors p-0.5 rounded hover:bg-surface-container flex items-center justify-center"
+                                      title="일정 삭제"
+                                      type="button"
+                                    >
+                                      <span className="material-symbols-outlined text-[13px]">delete</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                              {event.location && (
+                                <div className="text-[9px] text-on-surface-variant flex items-center gap-1 mt-0.5">
+                                  <span className="material-symbols-outlined text-[9px]">location_on</span>
+                                  {event.location}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 일정 추가 버튼 */}
+                      {onOpenCreateModal && (
+                        <div className="border-t border-outline-variant/10 pt-3 mt-1 flex justify-end">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOpenCreateModal();
+                            }}
+                            className="text-primary font-bold text-xs flex items-center gap-0.5 hover:underline"
+                            type="button"
+                          >
+                            이 날짜에 새 일정 등록
+                            <span className="material-symbols-outlined text-[14px] font-bold">add</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

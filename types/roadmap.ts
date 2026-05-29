@@ -34,6 +34,7 @@ export type RoadmapStep = {
   status: TaskStatus;
   completedAt: string | null;
   memo: string | null;
+  googleEventId: string | null;
 };
 
 export type RoadmapGoal = {
