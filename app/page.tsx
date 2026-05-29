@@ -166,6 +166,55 @@ export default function Home() {
     return eventsByDate[selectedDateStr] ?? [];
   }, [selectedDateStr, eventsByDate]);
 
+  // 선택된 날짜에 연동된 목표만 필터링 (구글 일정 ID 매칭 및 지능형 텍스트 유사성 매칭 이중 필터링)
+  const filteredGoals = useMemo(() => {
+    if (selectedDateEvents.length === 0) return [];
+
+    const selectedEventIds = selectedDateEvents.map((event) => event.id);
+
+    return goals.filter((goal) => {
+      // 1. 고유 ID 기반 매칭 (최우선)
+      const isGoalLinked = goal.googleEventId ? selectedEventIds.includes(goal.googleEventId) : false;
+      const isStepLinked = goal.steps.some((step) =>
+        step.googleEventId ? selectedEventIds.includes(step.googleEventId) : false
+      );
+      if (isGoalLinked || isStepLinked) return true;
+
+      // 2. 지능형 텍스트 유사성 매칭 (Title/Description 스마트 서치)
+      const normalizedGoalTitle = goal.title.replace(/\s+/g, "").toLowerCase();
+
+      return selectedDateEvents.some((event) => {
+        // [업무] 프리픽스 및 공백 제거 처리
+        const normalizedEventTitle = event.title
+          .replace(/^\[업무\]\s*/i, "")
+          .replace(/\s+/g, "")
+          .toLowerCase();
+
+        const normalizedEventDesc = event.description
+          ? event.description.replace(/\s+/g, "").toLowerCase()
+          : "";
+
+        // A. 목표 제목과의 매칭
+        const isGoalTitleMatched =
+          normalizedEventTitle.includes(normalizedGoalTitle) ||
+          normalizedGoalTitle.includes(normalizedEventTitle) ||
+          normalizedEventDesc.includes(normalizedGoalTitle);
+
+        if (isGoalTitleMatched) return true;
+
+        // B. 세부 단계(Steps) 중 제목과의 매칭
+        return goal.steps.some((step) => {
+          const normalizedStepTitle = step.title.replace(/\s+/g, "").toLowerCase();
+          return (
+            normalizedEventTitle.includes(normalizedStepTitle) ||
+            normalizedStepTitle.includes(normalizedEventTitle) ||
+            normalizedEventDesc.includes(normalizedStepTitle)
+          );
+        });
+      });
+    });
+  }, [goals, selectedDateEvents]);
+
   // 달력 월 변경 핸들러
   const handlePrevMonth = () => {
     setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
@@ -433,7 +482,8 @@ export default function Home() {
 
                 {/* 2. 격리 추출된 몰입 할일 및 완료 진행율 종합 컴포넌트 */}
                 <ActiveGoalSection
-                  goals={goals}
+                  goals={filteredGoals}
+                  allGoalsLength={goals.length}
                   onOpenTaskSyncModal={openTaskSyncModal}
                   onDeleteGoal={deleteGoal}
                   isLeaf={isLeaf}

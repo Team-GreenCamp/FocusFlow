@@ -41,6 +41,7 @@ export function serializeGoal(goal: {
       status: step.status,
       completedAt: step.completedAt?.toISOString() ?? null,
       memo: step.memo,
+      googleEventId: step.googleEventId,
     })),
   };
 }

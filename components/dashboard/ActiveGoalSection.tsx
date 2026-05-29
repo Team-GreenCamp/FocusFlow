@@ -6,6 +6,7 @@ import type { RoadmapGoal, RoadmapStep } from "@/types/roadmap";
 
 type ActiveGoalSectionProps = {
   goals: RoadmapGoal[];
+  allGoalsLength: number; // 전체 보유 목표 총 개수
   onOpenTaskSyncModal: (goalTitle: string, step: RoadmapStep) => void;
   onDeleteGoal: (goalId: string, goalTitle: string) => void;
   isLeaf: (step: RoadmapStep, steps: RoadmapStep[]) => boolean;
@@ -14,6 +15,7 @@ type ActiveGoalSectionProps = {
 
 export default function ActiveGoalSection({
   goals,
+  allGoalsLength,
   onOpenTaskSyncModal,
   onDeleteGoal,
   isLeaf,
@@ -28,14 +30,24 @@ export default function ActiveGoalSection({
 
       <div className="glass-card p-5 rounded-2xl min-h-[180px] flex flex-col justify-between border border-outline-variant/20 shadow-md">
         <div className="space-y-3 max-h-[350px] overflow-y-auto pr-0.5">
-          {goals.length === 0 ? (
+          {allGoalsLength === 0 ? (
+            // 1. 서비스에 아예 목표가 없는 완전 빈 상태
             <div className="flex-grow flex flex-col items-center justify-center text-center py-6">
               <span className="material-symbols-outlined text-outline/60 text-3xl mb-2">task_alt</span>
               <p className="text-on-surface-variant text-xs break-keep leading-relaxed">
                 진행 중인 몰입 목표가 없습니다.
               </p>
             </div>
+          ) : goals.length === 0 ? (
+            // 2. 목표는 있지만 오늘 날짜에 연동된 일정이 하나도 없는 상태
+            <div className="flex-grow flex flex-col items-center justify-center text-center py-8">
+              <span className="material-symbols-outlined text-outline/50 text-2xl mb-2">calendar_today</span>
+              <p className="text-on-surface-variant text-xs break-keep leading-relaxed max-w-[200px]">
+                선택하신 날짜에 연동된 몰입 목표 일정이 없습니다.
+              </p>
+            </div>
           ) : (
+            // 3. 필터링된 목표들 렌더링
             goals.slice(0, 3).map((goal) => {
               const leafSteps = goal.steps.filter((s) => isLeaf(s, goal.steps));
               const completedLeaf = leafSteps.filter((s) => s.status === "DONE");
@@ -49,7 +61,7 @@ export default function ActiveGoalSection({
               return (
                 <div
                   key={goal.id}
-                  className="p-4 rounded-xl bg-surface-container-lowest/50 border border-outline-variant/20 hover:border-secondary/20 transition-all flex flex-col gap-3 relative overflow-hidden"
+                  className="p-4 rounded-xl bg-surface-container-lowest/50 border border-outline-variant/20 hover:border-secondary/20 transition-all flex flex-col gap-3 relative overflow-hidden animate-fade-in"
                 >
                   <div className="flex justify-between items-center gap-2 border-b border-outline-variant/15 pb-2">
                     <h4 className="font-bold text-sm text-on-surface truncate max-w-[50%]">
@@ -147,7 +159,7 @@ export default function ActiveGoalSection({
         </div>
 
         <div className="border-t border-outline-variant/15 pt-3 mt-4 flex justify-between items-center text-[10.5px]">
-          <span className="text-outline font-medium">진행 중인 목표 총 {goals.length}개</span>
+          <span className="text-outline font-medium">전체 목표 총 {allGoalsLength}개 (선택일 연동 {goals.length}개)</span>
         </div>
       </div>
     </div>
