@@ -8,6 +8,12 @@ import MobileNav from "@/components/MobileNav";
 import type { RoadmapGoal, RoadmapStep } from "@/types/roadmap";
 import type { CalendarEventSummary } from "@/lib/google-calendar";
 
+// 새로 추출한 4가지의 독립 조립식 클린 컴포넌트들 임포트
+import CreateEventModal from "@/components/dashboard/CreateEventModal";
+import CalendarSection from "@/components/dashboard/CalendarSection";
+import TimelineSection from "@/components/dashboard/TimelineSection";
+import ActiveGoalSection from "@/components/dashboard/ActiveGoalSection";
+
 // 리프 노드인지 확인하는 헬퍼 함수
 function isLeaf(step: RoadmapStep, steps: RoadmapStep[]) {
   return !steps.some((candidate) => candidate.parentStepId === step.id);
@@ -285,6 +291,7 @@ export default function Home() {
     }
   };
 
+  // D. 로드맵 업무(Goal) 전체 영구 삭제 통신 핸들러
   const deleteGoal = async (goalId: string, goalTitle: string) => {
     if (!confirm(`"${goalTitle}" 업무를 정말로 삭제하시겠습니까?\n이 목표에 포함된 모든 단계가 함께 영구 삭제됩니다.`)) {
       return;
@@ -311,6 +318,7 @@ export default function Home() {
     }
   };
 
+  // E. 구글 캘린더 일정 삭제 통신 핸들러 (연동 매핑 자동 해제 포함)
   const deleteCalendarEvent = async (eventId: string, eventTitle: string) => {
     if (!confirm(`"${eventTitle}" 일정을 구글 캘린더에서 정말로 삭제하시겠습니까?\n연동된 업무 정보도 함께 동기화가 해제됩니다.`)) {
       return;
@@ -367,7 +375,7 @@ export default function Home() {
             </div>
           </div>
         ) : status === "authenticated" ? (
-          // ==================== [ 로그인 상태 대시보드 뷰 ] ====================
+          // ==================== [ 로그인 상태 대시보드 뷰 (조립 구조) ] ====================
           <div className="w-full flex-grow flex flex-col gap-8 py-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/20 pb-5">
               <div>
@@ -398,327 +406,39 @@ export default function Home() {
             {/* Dashboard Grid (월간 달력 및 양방향 동기화) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
-              {/* 좌측 (12열 중 8열 배정): 인터랙티브 월간 달력 그리드 */}
-              <div className="lg:col-span-8 flex flex-col gap-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-1">
-                  
-                  {/* 달력 제목 구글 이동 링킹 숏컷 장착 */}
-                  <a
-                    href="https://calendar.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-headline-sm text-lg font-bold text-on-surface flex items-center gap-2 group hover:text-primary transition-colors cursor-pointer"
-                    title="구글 캘린더 새 창에서 열기"
-                  >
-                    <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
-                    <span>구글 캘린더 달력</span>
-                    <span className="material-symbols-outlined text-outline text-sm group-hover:text-primary transition-colors">open_in_new</span>
-                  </a>
-                  
-                  {/* 달력 컨트롤러 */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleToday}
-                      className="px-3 py-1 bg-surface-container-high/60 border border-outline-variant/30 text-on-surface text-xs font-semibold rounded-lg hover:bg-surface-container transition-all"
-                    >
-                      오늘
-                    </button>
-                    <div className="flex items-center bg-surface-container-low/40 rounded-lg border border-outline-variant/30 px-1 py-0.5">
-                      <button
-                        onClick={handlePrevMonth}
-                        className="p-1 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center"
-                        aria-label="이전 달"
-                      >
-                        <span className="material-symbols-outlined text-base">chevron_left</span>
-                      </button>
-                      <span className="text-xs font-bold text-on-surface px-2.5 min-w-[75px] text-center">
-                        {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-                      </span>
-                      <button
-                        onClick={handleNextMonth}
-                        className="p-1 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center"
-                        aria-label="다음 달"
-                      >
-                        <span className="material-symbols-outlined text-base">chevron_right</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+              {/* 좌측 (8열): 격리 추출된 인터랙티브 월간 달력 그리드 컴포넌트 */}
+              <CalendarSection
+                currentDate={currentDate}
+                calendarCells={calendarCells}
+                selectedDateStr={selectedDateStr}
+                onSelectDate={setSelectedDateStr}
+                eventsByDate={eventsByDate}
+                todayStr={todayStr}
+                onPrevMonth={handlePrevMonth}
+                onNextMonth={handleNextMonth}
+                onToday={handleToday}
+              />
 
-                {/* 실제 달력 그리드 카드 */}
-                <div className="glass-card p-5 rounded-3xl border border-outline-variant/20 shadow-md">
-                  {/* 요일 헤더 */}
-                  <div className="grid grid-cols-7 gap-1 text-center font-bold text-xs text-outline mb-2.5">
-                    <div className="text-error/85 py-1">일</div>
-                    <div className="py-1">월</div>
-                    <div className="py-1">화</div>
-                    <div className="py-1">수</div>
-                    <div className="py-1">목</div>
-                    <div className="py-1">금</div>
-                    <div className="text-primary/80 py-1">토</div>
-                  </div>
-
-                  {/* 42칸 날짜 셀 격자 */}
-                  <div className="grid grid-cols-7 gap-1.5 md:gap-2">
-                    {calendarCells.map(({ dateStr, day, isCurrentMonth }) => {
-                      const dayEvents = eventsByDate[dateStr] ?? [];
-                      const isToday = dateStr === todayStr;
-                      const isSelected = dateStr === selectedDateStr;
-                      
-                      const dayOfWeek = new Date(dateStr).getDay();
-
-                      return (
-                        <div
-                          key={dateStr}
-                          onClick={() => setSelectedDateStr(dateStr)}
-                          className={`min-h-[75px] md:min-h-[90px] p-1.5 md:p-2 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
-                            isSelected
-                              ? "bg-primary/10 border-primary ring-1 ring-primary"
-                              : isToday
-                                ? "bg-surface-container-high/40 border-secondary"
-                                : isCurrentMonth
-                                  ? "bg-surface-container-lowest/20 border-outline-variant/15 hover:border-primary/45"
-                                  : "bg-surface-container-low/10 border-transparent opacity-35 hover:opacity-50"
-                          }`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <span
-                              className={`text-xs font-bold leading-none w-5 h-5 flex items-center justify-center rounded-full ${
-                                isToday
-                                  ? "bg-secondary text-on-secondary shadow-sm"
-                                  : dayOfWeek === 0
-                                    ? "text-error"
-                                    : dayOfWeek === 6
-                                      ? "text-primary"
-                                      : "text-on-surface"
-                              }`}
-                            >
-                              {day}
-                            </span>
-                            {dayEvents.length > 2 && (
-                              <span className="text-[9px] font-bold text-secondary bg-secondary/15 px-1 py-0.5 rounded-full shrink-0">
-                                +{dayEvents.length - 2}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex flex-col gap-1 mt-1.5 overflow-hidden">
-                            {dayEvents.slice(0, 2).map((event) => (
-                              <div
-                                key={event.id}
-                                title={event.title}
-                                className="text-[9px] md:text-[10px] font-medium bg-primary/10 text-primary truncate px-1.5 py-0.5 rounded-md border border-primary/5 line-clamp-1"
-                              >
-                                {event.title}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* 우측 (12열 중 4열 배정): 선택일정 상세 패널 및 할일 목록 */}
+              {/* 우측 (4열 배정): 선택 일정 타임라인 및 몰입 할일 목록 */}
               <div className="lg:col-span-4 flex flex-col gap-6">
                 
-                {/* 1. 선택된 날짜의 구체적 일정 타임라인 */}
-                <div className="flex flex-col gap-3">
-                  <h3 className="font-headline-sm text-base font-bold text-on-surface flex items-center gap-1.5 pl-1">
-                    <span className="material-symbols-outlined text-secondary text-lg">event_available</span>
-                    {formattedSelectedDate}
-                  </h3>
-                  
-                  <div className="glass-card p-5 rounded-2xl min-h-[180px] flex flex-col justify-between">
-                    {selectedDateEvents.length === 0 ? (
-                      <div className="flex-grow flex flex-col items-center justify-center text-center py-6">
-                        <span className="material-symbols-outlined text-outline/60 text-3xl mb-2">calendar_today</span>
-                        <p className="text-on-surface-variant text-xs break-keep leading-relaxed">
-                          해당 날짜에 등록된 <br />
-                          구글 캘린더 일정이 없습니다.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-0.5">
-                        {selectedDateEvents.map((event) => (
-                          <div
-                            key={event.id}
-                            className="p-3 rounded-xl bg-surface-container-lowest/50 border border-outline-variant/20 hover:border-primary/20 transition-all flex flex-col gap-1"
-                          >
-                            <div className="flex items-start justify-between gap-1">
-                              <h5 className="font-bold text-xs text-on-surface line-clamp-1">
-                                {event.title}
-                              </h5>
-                              <div className="flex items-center gap-1.5 shrink-0">
-                                <span className="text-[10px] font-semibold text-primary bg-primary/5 px-2 py-0.5 rounded-full">
-                                  {formatTime(event.start, event.allDay)}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => deleteCalendarEvent(event.id, event.title)}
-                                  className="text-on-surface-variant hover:text-error transition-colors p-0.5 rounded hover:bg-surface-container flex items-center justify-center"
-                                  title="이 일정 구글 캘린더에서 삭제"
-                                >
-                                  <span className="material-symbols-outlined text-[14px]">delete</span>
-                                </button>
-                              </div>
-                            </div>
-                            {event.location && (
-                              <div className="text-[10px] text-on-surface-variant flex items-center gap-1 mt-0.5">
-                                <span className="material-symbols-outlined text-[10px]">location_on</span>
-                                {event.location}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    
-                    <div className="border-t border-outline-variant/15 pt-3 mt-4 flex justify-between items-center text-[10.5px]">
-                      <span className="text-outline font-medium">일정 총 {selectedDateEvents.length}개</span>
-                      <button
-                        onClick={openCreateEventModal}
-                        className="text-primary font-bold flex items-center gap-0.5 hover:underline"
-                      >
-                        내 캘린더에 일정 등록
-                        <span className="material-symbols-outlined text-[12px] font-bold">add</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                {/* 1. 격리 추출된 선택 날짜의 구체적 일정 타임라인 컴포넌트 */}
+                <TimelineSection
+                  formattedSelectedDate={formattedSelectedDate}
+                  selectedDateEvents={selectedDateEvents}
+                  onOpenCreateModal={openCreateEventModal}
+                  onDeleteEvent={deleteCalendarEvent}
+                  formatTime={formatTime}
+                />
 
-                {/* 2. 몰입 할일 및 진행률 요약 (구글 캘린더 직접 연동 및 앵커링 스크롤 포함) */}
-                <div className="flex flex-col gap-3">
-                  <h3 className="font-headline-sm text-base font-bold text-on-surface flex items-center gap-1.5 pl-1">
-                    <span className="material-symbols-outlined text-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>task_alt</span>
-                    목표 몰입 할일 ({goals.length}개)
-                  </h3>
-
-                  <div className="glass-card p-5 rounded-2xl min-h-[180px] flex flex-col justify-between border border-outline-variant/20 shadow-md">
-                    <div className="space-y-3 max-h-[350px] overflow-y-auto pr-0.5">
-                      {goals.length === 0 ? (
-                        <div className="flex-grow flex flex-col items-center justify-center text-center py-6">
-                          <span className="material-symbols-outlined text-outline/60 text-3xl mb-2">task_alt</span>
-                          <p className="text-on-surface-variant text-xs break-keep leading-relaxed">
-                            진행 중인 몰입 목표가 없습니다.
-                          </p>
-                        </div>
-                      ) : (
-                        goals.slice(0, 3).map((goal) => {
-                          const leafSteps = goal.steps.filter((s) => isLeaf(s, goal.steps));
-                          const completedLeaf = leafSteps.filter((s) => s.status === "DONE");
-                          const progress = leafSteps.length > 0 ? Math.round((completedLeaf.length / leafSteps.length) * 100) : 0;
-                          const activeStep = findCurrentWorkStep(goal);
-
-                          // 캘린더 동기화 및 완료 여부 파악
-                          const isSynced = activeStep && activeStep.googleEventId;
-                          const isDone = activeStep && activeStep.status === "DONE";
-
-                          return (
-                            <div
-                              key={goal.id}
-                              className="p-4 rounded-xl bg-surface-container-lowest/50 border border-outline-variant/20 hover:border-secondary/20 transition-all flex flex-col gap-3 relative overflow-hidden"
-                            >
-                              <div className="flex justify-between items-center gap-2 border-b border-outline-variant/15 pb-2">
-                                <h4 className="font-bold text-sm text-on-surface truncate max-w-[50%]">
-                                  {goal.title}
-                                </h4>
-                                
-                                <div className="flex items-center gap-3">
-                                  {/* 상세 링크 대상을 실제 /roadmaps/[id]#roadmap-list-section 으로 변경하여 극상의 스크롤 포커싱 UX 제공 */}
-                                  <Link
-                                    href={`/roadmaps/${goal.id}#roadmap-list-section`}
-                                    className="text-[10px] text-outline font-bold flex items-center gap-0.5 hover:text-primary hover:underline transition-colors"
-                                  >
-                                    상세
-                                    <span className="material-symbols-outlined text-[11px]">arrow_forward</span>
-                                  </Link>
-
-                                  <button
-                                    type="button"
-                                    onClick={() => deleteGoal(goal.id, goal.title)}
-                                    className="text-[10px] text-outline font-bold flex items-center gap-0.5 hover:text-error hover:underline transition-colors animate-fade-in"
-                                    title="이 업무 전체 삭제"
-                                  >
-                                    삭제
-                                    <span className="material-symbols-outlined text-[11px]">delete</span>
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* 진행 바 */}
-                              <div className="space-y-1">
-                                <div className="flex justify-between text-[10px] font-bold text-outline">
-                                  <span>완료율</span>
-                                  <span className="text-secondary">{progress}% ({completedLeaf.length}/{leafSteps.length})</span>
-                                </div>
-                                <div className="w-full h-1 bg-surface-container rounded-full overflow-hidden">
-                                  <div
-                                    className="h-full bg-secondary rounded-full"
-                                    style={{ width: `${progress}%` }}
-                                  />
-                                </div>
-                              </div>
-
-                              {/* 액티브 다음 행동 및 달력 중복 가드 등록 제어 */}
-                              {activeStep && (
-                                <div className="p-2.5 rounded-lg bg-surface-container-lowest/30 border border-outline-variant/20 flex items-center justify-between gap-3">
-                                  <div className="space-y-0.5 min-w-0 flex-1">
-                                    <span className="text-[8.5px] text-primary font-bold tracking-widest uppercase">
-                                      NEXT
-                                    </span>
-                                    <h5 className="font-semibold text-xs text-on-surface truncate">
-                                      {activeStep.title}
-                                    </h5>
-                                  </div>
-                                  <div className="shrink-0 flex items-center gap-1.5">
-                                    
-                                    {/* 중복 연동 가드 UI 제어 */}
-                                    {isDone ? (
-                                      // 1. 이미 완료된 업무면 달력 추가 아이콘 노출 자체를 원천 차단
-                                      null
-                                    ) : isSynced ? (
-                                      // 2. 이미 달력에 동기화가 성공했다면, 초록색 등록 완료 배지 및 클릭 차단
-                                      <div
-                                        title="구글 캘린더에 이미 연동된 몰입 업무입니다"
-                                        className="p-1 px-1.5 bg-emerald-500/10 border border-emerald-500/25 text-emerald-500 rounded text-[9.5px] font-bold flex items-center gap-0.5 select-none shrink-0"
-                                      >
-                                        <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
-                                        등록됨
-                                      </div>
-                                    ) : (
-                                      // 3. 아직 동기화 전이고 완료 안 된 활성 상태일 때만 정상적으로 등록 단축키 노출
-                                      <button
-                                        onClick={() => openTaskSyncModal(goal.title, activeStep)}
-                                        title="이 업무를 내 달력 일정에 추가하기"
-                                        className="p-1.5 bg-surface-container border border-outline-variant text-on-surface-variant hover:text-secondary rounded transition-all hover:scale-105 active:scale-95 flex items-center justify-center shrink-0"
-                                      >
-                                        <span className="material-symbols-outlined text-[14px]">calendar_add_on</span>
-                                      </button>
-                                    )}
-
-                                    <Link
-                                      href="/deep-work"
-                                      className="px-2.5 py-1.5 bg-primary text-white font-bold rounded text-[10px] shadow hover:bg-primary/95 transition-all flex items-center gap-0.5 shrink-0"
-                                    >
-                                      <span className="material-symbols-outlined text-[10px]">bolt</span>
-                                      집중
-                                    </Link>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-
-                    <div className="border-t border-outline-variant/15 pt-3 mt-4 flex justify-between items-center text-[10.5px]">
-                      <span className="text-outline font-medium">진행 중인 목표 총 {goals.length}개</span>
-                    </div>
-                  </div>
-                </div>
+                {/* 2. 격리 추출된 몰입 할일 및 완료 진행율 종합 컴포넌트 */}
+                <ActiveGoalSection
+                  goals={goals}
+                  onOpenTaskSyncModal={openTaskSyncModal}
+                  onDeleteGoal={deleteGoal}
+                  isLeaf={isLeaf}
+                  findCurrentWorkStep={findCurrentWorkStep}
+                />
 
               </div>
 
@@ -782,120 +502,24 @@ export default function Home() {
         )}
       </main>
 
-      {/* ==================== [ 구글 일정 등록 팝업 모달 ] ==================== */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all animate-fade-in">
-          <div className="glass-card p-6 md:p-7 rounded-3xl w-full max-w-md border border-outline-variant/30 shadow-2xl relative">
-            
-            {/* Modal Header */}
-            <div className="flex justify-between items-center border-b border-outline-variant/20 pb-4 mb-5">
-              <h3 className="font-headline-sm text-lg font-bold text-on-surface flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">calendar_add_on</span>
-                구글 캘린더에 일정 등록
-              </h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-container"
-                aria-label="닫기"
-              >
-                <span className="material-symbols-outlined text-xl">close</span>
-              </button>
-            </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleCreateEvent} className="space-y-4">
-              
-              {/* 일정 제목 */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-outline uppercase pl-0.5">일정 제목</label>
-                <input
-                  type="text"
-                  required
-                  value={modalTitle}
-                  onChange={(e) => setModalTitle(e.target.value)}
-                  placeholder="예: FocusFlow 일정 추가"
-                  className="w-full px-4 h-11 bg-white/40 dark:bg-surface-container-high/40 border border-outline-variant/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-sm text-on-surface font-semibold"
-                />
-              </div>
-
-              {/* 일정 설명 */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-outline uppercase pl-0.5">상세 설명 (메모)</label>
-                <textarea
-                  value={modalDescription}
-                  onChange={(e) => setModalDescription(e.target.value)}
-                  placeholder="일정에 관한 설명이나 준비물을 적어보세요."
-                  className="w-full p-4 min-h-20 resize-none bg-white/40 dark:bg-surface-container-high/40 border border-outline-variant/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-xs text-on-surface leading-relaxed"
-                />
-              </div>
-
-              {/* 날짜 및 시간 영역 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* 날짜 선택 */}
-                <div className="space-y-1.5 col-span-2 sm:col-span-1">
-                  <label className="text-xs font-bold text-outline uppercase pl-0.5">날짜</label>
-                  <input
-                    type="date"
-                    required
-                    value={modalDate}
-                    onChange={(e) => setModalDate(e.target.value)}
-                    className="w-full px-3 h-11 bg-white/40 dark:bg-surface-container-high/40 border border-outline-variant/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-xs text-on-surface"
-                  />
-                </div>
-
-                {/* 시간 설정 */}
-                <div className="grid grid-cols-2 gap-2 col-span-2 sm:col-span-1">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-outline uppercase pl-0.5">시작</label>
-                    <input
-                      type="time"
-                      required
-                      value={modalStartTime}
-                      onChange={(e) => setModalStartTime(e.target.value)}
-                      className="w-full px-2 h-11 bg-white/40 dark:bg-surface-container-high/40 border border-outline-variant/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-xs text-on-surface"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-outline uppercase pl-0.5">종료</label>
-                    <input
-                      type="time"
-                      required
-                      value={modalEndTime}
-                      onChange={(e) => setModalEndTime(e.target.value)}
-                      className="w-full px-2 h-11 bg-white/40 dark:bg-surface-container-high/40 border border-outline-variant/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-xs text-on-surface"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {modalError && (
-                <p className="rounded-lg bg-error-container/20 border border-error/20 px-3 py-2 text-xs text-error font-medium">
-                  {modalError}
-                </p>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t border-outline-variant/20 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 h-11 bg-surface-container border border-outline-variant/30 text-on-surface-variant text-xs font-bold rounded-xl hover:bg-surface-container-high active:scale-98 transition-all"
-                >
-                  취소
-                </button>
-                <button
-                  type="submit"
-                  disabled={modalLoading}
-                  className="flex-1 h-11 bg-primary text-white text-xs font-bold rounded-xl shadow-md hover:bg-primary/95 active:scale-98 transition-all flex items-center justify-center"
-                >
-                  {modalLoading ? "등록하는 중..." : "일정 추가"}
-                </button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      )}
+      {/* ==================== [ 격리 추출된 구글 일정 등록 팝업 모달 컴포넌트 ] ==================== */}
+      <CreateEventModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        modalTitle={modalTitle}
+        setModalTitle={setModalTitle}
+        modalDescription={modalDescription}
+        setModalDescription={setModalDescription}
+        modalDate={modalDate}
+        setModalDate={setModalDate}
+        modalStartTime={modalStartTime}
+        setModalStartTime={setModalStartTime}
+        modalEndTime={modalEndTime}
+        setModalEndTime={setModalEndTime}
+        modalError={modalError}
+        modalLoading={modalLoading}
+        onSubmit={handleCreateEvent}
+      />
 
       {/* Mobile Nav */}
       <MobileNav />
