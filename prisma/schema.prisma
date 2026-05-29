@@ -14,15 +14,16 @@ enum TaskStatus {
 }
 
 model Goal {
-  id          String      @id @default(cuid())
-  userId      String?
-  title       String
-  description String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  steps       TaskStep[]
-  reflections Reflection[]
+  id            String      @id @default(cuid())
+  userId        String?
+  title         String
+  description   String?
+  googleEventId String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steps         TaskStep[]
+  reflections   Reflection[]
 
   @@index([userId])
 }
@@ -34,9 +35,11 @@ model TaskStep {
   order           Int
   title           String
   description     String
+  estimateMinutes Int
   status          TaskStatus  @default(LOCKED)
   completedAt     DateTime?
   memo            String?
+  googleEventId   String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   goal            Goal        @relation(fields: [goalId], references: [id], onDelete: Cascade)
@@ -86,19 +89,20 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])

@@ -3,6 +3,7 @@ import { z } from "zod";
 export const taskStepOutputSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
+  estimateMinutes: z.number().int().min(1),
 });
 
 export const roadmapOutputSchema = z.object({
@@ -39,6 +40,7 @@ export type RoadmapGoal = {
   id: string;
   title: string;
   description: string | null;
+  googleEventId: string | null;
   steps: RoadmapStep[];
 };
 

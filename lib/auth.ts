@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           // 캘린더 읽기 권한까지 함께 요청해 일정 기반 피드백을 만들 수 있게 합니다.
-          scope: "openid email profile https://www.googleapis.com/auth/calendar.readonly",
+          scope: "openid email profile https://www.googleapis.com/auth/calendar",
           access_type: "offline",
           prompt: "consent",
           response_type: "code",

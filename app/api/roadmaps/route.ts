@@ -27,9 +27,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    const body = (await request.json()) as { goal?: string; context?: string; source?: string };
+    const body = (await request.json()) as { goal?: string; context?: string; source?: string; googleEventId?: string };
     const goalTitle = body.goal?.trim();
     const goalContext = body.context?.trim();
+    const googleEventId = body.googleEventId?.trim();
 
     if (!goalTitle) {
       return NextResponse.json({ error: "구체화할 업무를 입력해 주세요." }, { status: 400 });
@@ -43,10 +44,12 @@ export async function POST(request: Request) {
         userId,
         title: goalTitle,
         description: goalContext || null,
+        googleEventId: googleEventId || null,
         steps: {
           create: roadmap.steps.map((step, index) => ({
             title: step.title,
             description: step.description,
+            estimateMinutes: step.estimateMinutes,
             order: index,
             status: index === 0 ? TaskStatus.ACTIVE : TaskStatus.LOCKED,
           })),

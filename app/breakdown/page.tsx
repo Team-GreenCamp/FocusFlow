@@ -174,7 +174,7 @@ export default function BreakdownPage() {
             </form>
           </div>
 
-          <aside className="glass-card rounded-3xl p-6 space-y-5">
+          <aside id="roadmap-list-section" className="scroll-mt-24 glass-card rounded-3xl p-6 space-y-5">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary">account_tree</span>
               <h2 className="font-headline-md text-headline-md text-on-surface">이렇게 진행돼요</h2>

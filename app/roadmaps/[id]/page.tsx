@@ -170,6 +170,27 @@ export default function RoadmapDetailPage() {
     }
   }
 
+  async function deleteGoal() {
+    if (!goal) return;
+    if (!confirm(`"${goal.title}" 업무를 정말로 삭제하시겠습니까?\n이 목표에 포함된 모든 단계가 함께 영구 삭제됩니다.`)) {
+      return;
+    }
+
+    setError("");
+    setLoading("delete");
+
+    try {
+      await callApi(`/api/roadmaps/${goal.id}`, {
+        method: "DELETE",
+      });
+      router.push("/");
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "업무 삭제에 실패했습니다.");
+    } finally {
+      setLoading("");
+    }
+  }
+
   return (
     <div className="bg-surface text-on-surface min-h-screen relative overflow-hidden">
       {/* 백그라운드 리퀴드 글래스 블롭 */}
@@ -198,12 +219,23 @@ export default function RoadmapDetailPage() {
                 생성된 업무를 확인하고, 진행 가능한 항목을 완료하거나 더 세분화합니다.
               </p>
             </div>
-            <Link
-              href="/breakdown"
-              className="rounded-lg border border-outline-variant bg-white/60 px-4 py-2 text-sm font-bold text-on-surface transition hover:bg-surface-container-low"
-            >
-              새 업무 구체화
-            </Link>
+            <div className="flex gap-2 shrink-0">
+              <Link
+                href="/breakdown"
+                className="rounded-lg border border-outline-variant bg-white/60 px-4 py-2 text-sm font-bold text-on-surface transition hover:bg-surface-container-low"
+              >
+                새 업무 구체화
+              </Link>
+              <button
+                type="button"
+                onClick={deleteGoal}
+                disabled={loading === "delete"}
+                className="rounded-lg border border-error/30 bg-error/5 px-4 py-2 text-sm font-bold text-error/85 hover:text-error hover:bg-error/10 transition-all active:scale-95 flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-[16px]">delete</span>
+                {loading === "delete" ? "삭제 중..." : "업무 삭제"}
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -265,7 +297,7 @@ export default function RoadmapDetailPage() {
           )}
 
           {/* Flow Architecture Roadmap */}
-          <div className="glass-card p-6 rounded-xl">
+          <div id="roadmap-list-section" className="scroll-mt-24 glass-card p-6 rounded-xl">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary">account_tree</span>

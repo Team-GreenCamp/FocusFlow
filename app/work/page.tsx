@@ -151,7 +151,7 @@ export default function WorkPage() {
       const response = await fetch("/api/roadmaps", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ goal: event.title, context, source: "google-calendar" }),
+        body: JSON.stringify({ goal: event.title, context, source: "google-calendar", googleEventId: event.id }),
       });
       const data = (await response.json()) as { goal?: RoadmapGoal; error?: string };
 
@@ -162,6 +162,32 @@ export default function WorkPage() {
       router.push(`/roadmaps/${data.goal.id}`);
     } catch (requestError) {
       setCalendarError(requestError instanceof Error ? requestError.message : "캘린더 일정을 업무로 구체화하지 못했습니다.");
+    } finally {
+      setWorkingId(null);
+    }
+  }
+
+  async function deleteGoal(goalId: string, goalTitle: string) {
+    if (!confirm(`"${goalTitle}" 업무를 정말로 삭제하시겠습니까?\n이 목표에 포함된 모든 단계가 함께 영구 삭제됩니다.`)) {
+      return;
+    }
+
+    setWorkingId(goalId);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/roadmaps/${goalId}`, {
+        method: "DELETE",
+      });
+      const data = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "업무 삭제에 실패했습니다.");
+      }
+
+      await loadWorkData();
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "업무 삭제에 실패했습니다.");
     } finally {
       setWorkingId(null);
     }
@@ -228,21 +254,33 @@ export default function WorkPage() {
                         value={memoByStepId[step.id] ?? ""}
                         onChange={(event) => setMemoByStepId((prev) => ({ ...prev, [step.id]: event.target.value }))}
                       />
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="mt-3 flex flex-wrap items-center justify-between w-full">
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => completeStep(step)}
+                            disabled={workingId === step.id}
+                            className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-white transition hover:bg-primary-container hover:text-on-primary-container disabled:opacity-60"
+                          >
+                            {workingId === step.id ? "완료 중..." : "완료"}
+                          </button>
+                          <Link
+                            href={`/roadmaps/${goal.id}`}
+                            className="rounded-lg border border-outline-variant px-4 py-2 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low"
+                          >
+                            업무 상세 보기
+                          </Link>
+                        </div>
                         <button
                           type="button"
-                          onClick={() => completeStep(step)}
-                          disabled={workingId === step.id}
-                          className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-white transition hover:bg-primary-container hover:text-on-primary-container disabled:opacity-60"
+                          onClick={() => deleteGoal(goal.id, goal.title)}
+                          disabled={workingId === goal.id}
+                          className="text-xs font-semibold text-error/85 hover:text-error hover:underline transition-colors flex items-center gap-0.5"
+                          title="이 업무(목표) 전체 삭제"
                         >
-                          {workingId === step.id ? "완료 중..." : "완료"}
+                          <span className="material-symbols-outlined text-[14px]">delete</span>
+                          삭제
                         </button>
-                        <Link
-                          href={`/roadmaps/${goal.id}`}
-                          className="rounded-lg border border-outline-variant px-4 py-2 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low"
-                        >
-                          업무 상세 보기
-                        </Link>
                       </div>
                     </article>
                   ))}
@@ -269,37 +307,47 @@ export default function WorkPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {calendarEvents.map((event) => (
-                      <article key={event.id} className="rounded-2xl border border-outline-variant/30 bg-white/70 p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <h3 className="text-sm font-bold text-on-surface">{event.title}</h3>
-                            {event.location ? <p className="mt-1 text-xs text-on-surface-variant">{event.location}</p> : null}
+                    {calendarEvents.map((event) => {
+                      const isAlreadyCreated = goals.some((goal) => goal.googleEventId === event.id);
+                      return (
+                        <article key={event.id} className="rounded-2xl border border-outline-variant/30 bg-white/70 p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <h3 className="text-sm font-bold text-on-surface">{event.title}</h3>
+                              {event.location ? <p className="mt-1 text-xs text-on-surface-variant">{event.location}</p> : null}
+                            </div>
+                            <span className="shrink-0 text-xs font-bold text-primary">{formatEventTime(event)}</span>
                           </div>
-                          <span className="shrink-0 text-xs font-bold text-primary">{formatEventTime(event)}</span>
-                        </div>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => createRoadmapFromCalendar(event)}
-                            disabled={workingId === event.id}
-                            className="rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition hover:bg-primary-container hover:text-on-primary-container disabled:opacity-60"
-                          >
-                            {workingId === event.id ? "구체화 중..." : "이 일정 업무화"}
-                          </button>
-                          {event.htmlLink ? (
-                            <a
-                              href={event.htmlLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-lg border border-outline-variant px-3 py-2 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low"
-                            >
-                              캘린더 열기
-                            </a>
-                          ) : null}
-                        </div>
-                      </article>
-                    ))}
+                          <div className="mt-3 flex flex-wrap gap-2 items-center">
+                            {isAlreadyCreated ? (
+                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 border border-emerald-200">
+                                <span>등록 완료</span>
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => createRoadmapFromCalendar(event)}
+                                disabled={workingId === event.id}
+                                className="rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white transition hover:bg-primary-container hover:text-on-primary-container disabled:opacity-60"
+                              >
+                                {workingId === event.id ? "구체화 중..." : "이 일정 업무화"}
+                              </button>
+                            )}
+                            {event.htmlLink ? (
+                              <a
+                                href={event.htmlLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-lg border border-outline-variant px-3 py-2 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low"
+                              >
+                                캘린더 열기
+                              </a>
+                            ) : null}
+                          </div>
+                        </article>
+                      );
+                    })}
                   </div>
                 )}
               </section>

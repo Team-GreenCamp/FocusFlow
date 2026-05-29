@@ -23,12 +23,14 @@ export function serializeGoal(goal: {
   id: string;
   title: string;
   description: string | null;
+  googleEventId: string | null;
   steps: TaskStep[];
 }) {
   return {
     id: goal.id,
     title: goal.title,
     description: goal.description,
+    googleEventId: goal.googleEventId,
     steps: orderSteps(goal.steps).map((step) => ({
       id: step.id,
       goalId: step.goalId,

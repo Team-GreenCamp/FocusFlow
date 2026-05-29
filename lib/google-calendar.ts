@@ -101,15 +101,18 @@ export async function getGoogleAccessToken(userId: string) {
 export async function readPrimaryCalendarEvents(userId: string) {
   const accessToken = await getGoogleAccessToken(userId);
   const now = new Date();
-  const until = new Date(now);
-  until.setDate(until.getDate() + 7);
+  
+  // 현재 달의 1일 00:00:00 (로컬 타임존 반영)
+  const timeMin = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
+  // 다음 달의 마지막 날 23:59:59
+  const timeMax = new Date(now.getFullYear(), now.getMonth() + 2, 0, 23, 59, 59);
 
   const params = new URLSearchParams({
-    timeMin: now.toISOString(),
-    timeMax: until.toISOString(),
+    timeMin: timeMin.toISOString(),
+    timeMax: timeMax.toISOString(),
     singleEvents: "true",
     orderBy: "startTime",
-    maxResults: "10",
+    maxResults: "80",
   });
 
   const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`, {
@@ -139,4 +142,54 @@ export async function readPrimaryCalendarEvents(userId: string) {
       allDay: Boolean(event.start?.date && !event.start?.dateTime),
     };
   });
+}
+
+export async function createPrimaryCalendarEvent(
+  userId: string,
+  event: { title: string; description?: string | null; start: string; end: string }
+) {
+  const accessToken = await getGoogleAccessToken(userId);
+
+  const response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      summary: event.title,
+      description: event.description || "",
+      start: {
+        dateTime: event.start,
+      },
+      end: {
+        dateTime: event.end,
+      },
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error?.message ?? "Google Calendar에 일정을 등록하지 못했습니다.");
+  }
+
+  return data;
+}
+
+export async function deletePrimaryCalendarEvent(userId: string, eventId: string) {
+  const accessToken = await getGoogleAccessToken(userId);
+
+  const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    const data = (await response.json().catch(() => ({}))) as { error?: { message?: string } };
+    throw new Error(data.error?.message ?? "Google Calendar에서 일정을 삭제하지 못했습니다.");
+  }
+
+  return { success: true };
 }
