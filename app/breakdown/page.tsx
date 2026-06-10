@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileNav";
+import { callApi } from "@/lib/api-utils";
 import type { RoadmapGoal } from "@/types/roadmap";
 
 export default function BreakdownPage() {
@@ -36,28 +37,7 @@ export default function BreakdownPage() {
     return () => clearInterval(intervalId);
   }, [placeholders]);
 
-  async function callApi<T>(url: string, init?: RequestInit): Promise<T> {
-    const response = await fetch(url, {
-      ...init,
-      headers: {
-        "Content-Type": "application/json",
-        ...init?.headers,
-      },
-    });
-    const rawText = await response.text();
-    let data = { error: "빈 응답을 받았습니다." } as T & { error?: string };
-    if (rawText) {
-      try {
-        data = JSON.parse(rawText) as T & { error?: string };
-      } catch {
-        data = { error: "서버가 JSON이 아닌 응답을 반환했습니다." } as T & { error?: string };
-      }
-    }
-    if (!response.ok) {
-      throw new Error(data.error ?? "요청을 처리하지 못했습니다.");
-    }
-    return data;
-  }
+  
 
   async function createRoadmap(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

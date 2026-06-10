@@ -1,5 +1,7 @@
 "use client";
 
+import Skeleton from "@/components/common/Skeleton";
+
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -194,7 +196,7 @@ export default function WorkPage() {
   }
 
   return (
-    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen">
+    <div className="bg-bg-primary text-text-primary min-h-screen">
       <Header />
 
       <main className="pt-24 px-margin-mobile md:px-gutter pb-24 max-w-5xl mx-auto w-full min-h-screen">
@@ -203,8 +205,8 @@ export default function WorkPage() {
             <span className="text-primary font-bold font-label-md text-label-md tracking-widest uppercase">
               Work Overview
             </span>
-            <h1 className="font-headline-lg text-headline-lg mt-1 text-on-background">내 업무</h1>
-            <p className="mt-2 text-on-surface-variant font-body-md text-body-md">
+            <h1 className="font-headline-lg text-headline-lg mt-1 text-text-primary">내 업무</h1>
+            <p className="mt-2 text-text-primary-variant font-body-md text-body-md">
               진행 가능한 작업과 Google Calendar 일정을 한 화면에서 확인합니다.
             </p>
           </div>
@@ -220,36 +222,47 @@ export default function WorkPage() {
         {error ? <p className="mb-4 rounded-md bg-error-container px-4 py-3 text-sm text-error">{error}</p> : null}
 
         {loading ? (
-          <div className="glass-card rounded-3xl p-10 text-center text-on-surface-variant">
-            내 업무 데이터를 불러오는 중입니다.
+          <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+            <div className="glass-card rounded-3xl p-6 space-y-4">
+              <Skeleton className="h-8 w-48 mb-4" />
+              <Skeleton className="h-40 w-full" />
+              <Skeleton className="h-40 w-full" />
+            </div>
+            <div className="space-y-6">
+              <div className="glass-card rounded-3xl p-6 space-y-4">
+                <Skeleton className="h-8 w-36 mb-4" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            </div>
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
             <section className="glass-card rounded-3xl p-6">
               <div className="mb-5 flex items-center justify-between">
-                <h2 className="font-headline-md text-headline-md text-on-surface">현재 진행 중인 작업</h2>
+                <h2 className="font-headline-md text-headline-md text-text-primary">현재 진행 중인 작업</h2>
                 <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
                   {activeSteps.length}개
                 </span>
               </div>
 
               {activeSteps.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-outline-variant/30 p-8 text-center text-sm text-on-surface-variant">
+                <div className="rounded-xl border border-dashed border-outline-variant/30 p-8 text-center text-sm text-text-primary-variant">
                   진행 가능한 작업이 없습니다. 먼저 업무를 구체화해 주세요.
                 </div>
               ) : (
                 <div className="space-y-4">
                   {activeSteps.map(({ goal, step }) => (
-                    <article key={step.id} className="rounded-2xl border border-outline-variant/30 dark:border-neutral-700/50 bg-white/70 dark:bg-neutral-800/40 p-4">
+                    <article key={step.id} className="rounded-2xl border border-outline-variant/30 dark:border-neutral-700/50 bg-surface-color/70 dark:bg-surface-color/40 p-4">
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <p className="text-xs font-bold text-primary">{goal.title}</p>
-                          <h3 className="mt-1 font-bold text-on-surface dark:text-[#f5f5f7]">{step.title}</h3>
-                          <p className="mt-2 text-sm leading-6 text-on-surface-variant dark:text-[#a9abb6]">{step.description}</p>
+                          <h3 className="mt-1 font-bold text-text-primary dark:text-text-primary">{step.title}</h3>
+                          <p className="mt-2 text-sm leading-6 text-text-primary-variant dark:text-text-secondary">{step.description}</p>
                         </div>
                       </div>
                       <textarea
-                        className="mt-4 min-h-20 w-full resize-none rounded-xl border border-outline-variant dark:border-neutral-700 bg-white dark:bg-neutral-800/60 p-3 text-sm text-on-surface dark:text-[#f5f5f7] outline-none focus:ring-2 focus:ring-primary"
+                        className="mt-4 min-h-20 w-full resize-none rounded-xl border border-border-color bg-surface-color dark:bg-surface-color/60 p-3 text-sm text-text-primary dark:text-text-primary outline-none focus:ring-2 focus:ring-primary"
                         placeholder="완료하면서 남길 짧은 메모"
                         value={memoByStepId[step.id] ?? ""}
                         onChange={(event) => setMemoByStepId((prev) => ({ ...prev, [step.id]: event.target.value }))}
@@ -266,7 +279,7 @@ export default function WorkPage() {
                           </button>
                           <Link
                             href={`/roadmaps/${goal.id}`}
-                            className="rounded-lg border border-outline-variant dark:border-neutral-700 px-4 py-2 text-xs font-bold text-on-surface-variant dark:text-neutral-300 transition hover:bg-surface-container-low"
+                            className="rounded-lg border border-border-color px-4 py-2 text-xs font-bold text-text-primary-variant dark:text-neutral-300 transition hover:bg-surface-container-low"
                           >
                             업무 상세 보기
                           </Link>
@@ -291,18 +304,18 @@ export default function WorkPage() {
             <aside className="space-y-6">
               <section className="glass-card rounded-3xl p-6">
                 <div className="mb-5 flex items-center justify-between">
-                  <h2 className="font-headline-md text-headline-md text-on-surface">캘린더 일정</h2>
+                  <h2 className="font-headline-md text-headline-md text-text-primary">캘린더 일정</h2>
                   <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">
                     7일 내 {calendarEvents.length}개
                   </span>
                 </div>
 
                 {calendarError ? (
-                  <div className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm leading-6 text-on-surface-variant">
+                  <div className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm leading-6 text-text-primary-variant">
                     {calendarError}
                   </div>
                 ) : calendarEvents.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm text-on-surface-variant">
+                  <div className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm text-text-primary-variant">
                     앞으로 7일 안에 표시할 일정이 없습니다.
                   </div>
                 ) : (
@@ -310,11 +323,11 @@ export default function WorkPage() {
                     {calendarEvents.map((event) => {
                       const isAlreadyCreated = goals.some((goal) => goal.googleEventId === event.id);
                       return (
-                        <article key={event.id} className="rounded-2xl border border-outline-variant/30 dark:border-neutral-700/50 bg-white/70 dark:bg-neutral-800/40 p-4">
+                        <article key={event.id} className="rounded-2xl border border-outline-variant/30 dark:border-neutral-700/50 bg-surface-color/70 dark:bg-surface-color/40 p-4">
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <h3 className="text-sm font-bold text-on-surface dark:text-[#f5f5f7]">{event.title}</h3>
-                              {event.location ? <p className="mt-1 text-xs text-on-surface-variant dark:text-[#a9abb6]">{event.location}</p> : null}
+                              <h3 className="text-sm font-bold text-text-primary dark:text-text-primary">{event.title}</h3>
+                              {event.location ? <p className="mt-1 text-xs text-text-primary-variant dark:text-text-secondary">{event.location}</p> : null}
                             </div>
                             <span className="shrink-0 text-xs font-bold text-primary">{formatEventTime(event)}</span>
                           </div>
@@ -339,7 +352,7 @@ export default function WorkPage() {
                                 href={event.htmlLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="rounded-lg border border-outline-variant dark:border-neutral-700 px-3 py-2 text-xs font-bold text-on-surface-variant dark:text-neutral-300 transition hover:bg-surface-container-low"
+                                className="rounded-lg border border-border-color px-3 py-2 text-xs font-bold text-text-primary-variant dark:text-neutral-300 transition hover:bg-surface-container-low"
                               >
                                 캘린더 열기
                               </a>
@@ -354,22 +367,22 @@ export default function WorkPage() {
 
               <section className="glass-card rounded-3xl p-6">
                 <div className="mb-5 flex items-center justify-between">
-                  <h2 className="font-headline-md text-headline-md text-on-surface">오늘 완료한 업무</h2>
+                  <h2 className="font-headline-md text-headline-md text-text-primary">오늘 완료한 업무</h2>
                   <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
                     {completedToday.length}개
                   </span>
                 </div>
                 {completedToday.length === 0 ? (
-                  <p className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm text-on-surface-variant">
+                  <p className="rounded-xl border border-dashed border-outline-variant/30 p-5 text-sm text-text-primary-variant">
                     오늘 완료한 업무가 아직 없습니다.
                   </p>
                 ) : (
                   <div className="space-y-2">
                     {completedToday.map(({ goal, step }) => (
-                      <div key={step.id} className="rounded-xl bg-surface-container-lowest dark:bg-neutral-800/40 border border-transparent dark:border-neutral-700/50 p-3">
+                      <div key={step.id} className="rounded-xl bg-surface-color border border-border-color p-3">
                         <p className="text-xs font-bold text-primary">{goal.title}</p>
-                        <p className="mt-1 text-sm font-semibold text-on-surface dark:text-[#f5f5f7]">{step.title}</p>
-                        {step.memo ? <p className="mt-1 text-xs text-on-surface-variant dark:text-[#a9abb6]">{step.memo}</p> : null}
+                        <p className="mt-1 text-sm font-semibold text-text-primary dark:text-text-primary">{step.title}</p>
+                        {step.memo ? <p className="mt-1 text-xs text-text-primary-variant dark:text-text-secondary">{step.memo}</p> : null}
                       </div>
                     ))}
                   </div>

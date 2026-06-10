@@ -4,6 +4,7 @@ import { generateRoadmap } from "@/lib/ai/vertex";
 import { getCurrentUserId } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { serializeGoal } from "@/lib/roadmap";
+import { z } from "zod";
 
 export async function GET() {
   const userId = await getCurrentUserId();
@@ -27,14 +28,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    const body = (await request.json()) as { goal?: string; context?: string; source?: string; googleEventId?: string };
-    const goalTitle = body.goal?.trim();
-    const goalContext = body.context?.trim();
-    const googleEventId = body.googleEventId?.trim();
-
-    if (!goalTitle) {
-      return NextResponse.json({ error: "구체화할 업무를 입력해 주세요." }, { status: 400 });
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "올바르지 않은 JSON 요청 형식입니다." }, { status: 400 });
     }
+
+    const roadmapSchema = z.object({
+      goal: z.string({ required_error: "구체화할 업무를 입력해 주세요." }).trim().min(1, "구체화할 업무를 입력해 주세요."),
+      context: z.string().trim().optional(),
+      source: z.string().optional(),
+      googleEventId: z.string().trim().optional(),
+    });
+
+    const validation = roadmapSchema.safeParse(body);
+    if (!validation.success) {
+      const errorMsg = validation.error.errors[0]?.message || "요청 데이터가 유효하지 않습니다.";
+      return NextResponse.json({ error: errorMsg }, { status: 400 });
+    }
+
+    const { goal: goalTitle, context: goalContext, googleEventId } = validation.data;
 
     const roadmap = await generateRoadmap(goalTitle, goalContext);
 

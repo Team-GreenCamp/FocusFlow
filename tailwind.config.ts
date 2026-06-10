@@ -6,6 +6,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // CSS Variables 연동 시맨틱 컬러
+        "text-primary": "var(--color-text-primary)",
+        "text-secondary": "var(--color-text-secondary)",
+        "border-color": "var(--color-border-color)",
+        "bg-primary": "var(--color-bg-primary)",
+        "bg-secondary": "var(--color-bg-secondary)",
+        "surface-color": "var(--color-surface-color)",
+        "surface-hover": "var(--color-surface-hover)",
         // 기존 색상 보존
         ink: "#17211c",
         mist: "#eef5f0",

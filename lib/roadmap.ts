@@ -1,5 +1,6 @@
 import { TaskStatus, type TaskStep } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export function orderSteps<T extends Pick<TaskStep, "parentStepId" | "order" | "createdAt">>(steps: T[]) {
   return [...steps].sort((a, b) => {
@@ -46,8 +47,8 @@ export function serializeGoal(goal: {
   };
 }
 
-export async function unlockNextStep(completedStep: TaskStep) {
-  const siblings = await prisma.taskStep.findMany({
+export async function unlockNextStep(completedStep: TaskStep, tx: Prisma.TransactionClient | typeof prisma = prisma) {
+  const siblings = await tx.taskStep.findMany({
     where: {
       goalId: completedStep.goalId,
       parentStepId: completedStep.parentStepId,
@@ -57,7 +58,7 @@ export async function unlockNextStep(completedStep: TaskStep) {
   const nextSibling = siblings.find((step) => step.order > completedStep.order && step.status === TaskStatus.LOCKED);
 
   if (nextSibling) {
-    await prisma.taskStep.update({
+    await tx.taskStep.update({
       where: { id: nextSibling.id },
       data: { status: TaskStatus.ACTIVE },
     });
@@ -68,7 +69,7 @@ export async function unlockNextStep(completedStep: TaskStep) {
     return;
   }
 
-  const parent = await prisma.taskStep.findUnique({
+  const parent = await tx.taskStep.findUnique({
     where: { id: completedStep.parentStepId },
   });
 
@@ -77,9 +78,9 @@ export async function unlockNextStep(completedStep: TaskStep) {
   }
 
   // 하위 단계가 모두 끝나면 부모 단계를 완료하고 다음 루트 단계를 엽니다.
-  await prisma.taskStep.update({
+  await tx.taskStep.update({
     where: { id: parent.id },
     data: { status: TaskStatus.DONE, completedAt: new Date() },
   });
-  await unlockNextStep(parent);
+  await unlockNextStep(parent, tx);
 }

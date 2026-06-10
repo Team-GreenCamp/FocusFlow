@@ -515,7 +515,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen relative overflow-hidden">
+    <div className="bg-bg-primary text-text-primary min-h-screen relative overflow-hidden">
       {/* Header */}
       <Header />
 
@@ -541,10 +541,10 @@ export default function Home() {
           <div className="w-full flex-grow flex flex-col gap-8 py-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/10 pb-5">
               <div>
-                <h1 className="font-headline-lg text-3xl font-extrabold tracking-tight text-[#191f28]">
+                <h1 className="font-headline-lg text-3xl font-extrabold tracking-tight text-text-primary">
                   {session?.user?.name ? `${session.user.name}님의 몰입 대시보드` : "나의 몰입 대시보드"}
                 </h1>
-                <p className="text-[#4e5968] font-bold mt-1 text-sm">
+                <p className="text-text-secondary font-bold mt-1 text-sm">
                   구글 캘린더 달력과 나의 몰입 업무를 유기적으로 한눈에 분석하고 실행하세요.
                 </p>
               </div>

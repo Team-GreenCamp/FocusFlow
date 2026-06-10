@@ -6,8 +6,15 @@
 
 :root {
   color-scheme: light;
-  background: #f2f4f6;
-  color: #191f28;
+  --color-text-primary: #191f28;
+  --color-text-secondary: #4e5968;
+  --color-border-color: #edf1f5;
+  --color-bg-primary: #f2f4f6;
+  --color-bg-secondary: #f8fafc;
+  --color-surface-color: #ffffff;
+  --color-surface-hover: #f9fafb;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 * {
@@ -17,8 +24,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #f2f4f6;
-  color: #191f28;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   font-family: 'Geist', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -36,17 +43,15 @@ textarea {
 
 /* 토스 스타일의 정갈하고 둥근 백색 플레이트 카드 */
 .glass-card {
-  background: #ffffff;
-  border: 1px solid #edf1f5;
+  background: var(--color-surface-color);
+  border: 1px solid var(--color-border-color);
   box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.02);
   border-radius: 24px;
+  transition: all 0.2s ease-in-out;
 }
 
 .dark .glass-card {
-  background: rgba(25, 30, 40, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.2);
-  border-radius: 24px;
 }
 
 .momentum-gradient {
@@ -145,13 +150,16 @@ textarea {
 /* 브라우저 네이티브 날짜/시간 피커 및 select 드롭다운 다크 모드 강제 연동 */
 .dark {
   color-scheme: dark;
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #a9abb6;
+  --color-border-color: rgba(255, 255, 255, 0.08);
+  --color-bg-primary: #121212;
+  --color-bg-secondary: #1e1e1e;
+  --color-surface-color: rgba(25, 30, 40, 0.95);
+  --color-surface-hover: rgba(255, 255, 255, 0.03);
 }
 .dark body {
-  background-color: #121212;
-  color: #f5f5f7;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
-.dark input,
-.dark select,
-.dark textarea {
-  color-scheme: dark;
-}
+
