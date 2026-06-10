@@ -39,8 +39,17 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "해당 업무를 찾을 수 없거나 삭제 권한이 없습니다." }, { status: 404 });
   }
 
-  await prisma.goal.delete({
-    where: { id },
+  // 트랜잭션을 적용하여 하위 steps, reflections 등 연쇄 데이터를 안전하게 삭제합니다.
+  await prisma.$transaction(async (tx) => {
+    // 1. Goal과 연관된 reflections 삭제
+    await tx.reflection.deleteMany({
+      where: { goalId: id },
+    });
+
+    // 2. Goal 삭제 (onDelete: Cascade 설정에 의해 TaskStep들은 자동으로 삭제됩니다)
+    await tx.goal.delete({
+      where: { id },
+    });
   });
 
   return NextResponse.json({ success: true, message: "업무가 성공적으로 삭제되었습니다." });

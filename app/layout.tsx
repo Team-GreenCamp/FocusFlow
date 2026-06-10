@@ -13,11 +13,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="light">
+    <html lang="ko" suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const settings = JSON.parse(localStorage.getItem('focusflow-settings'));
+                if (settings && settings.theme === 'dark') {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.add('light');
+                }
+              } catch (_) {}
+            `
+          }}
         />
       </head>
       <body>

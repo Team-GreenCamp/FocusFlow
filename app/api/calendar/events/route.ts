@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUserId } from "@/lib/current-user";
-import { readPrimaryCalendarEvents, createPrimaryCalendarEvent, deletePrimaryCalendarEvent } from "@/lib/google-calendar";
+import { readPrimaryCalendarEvents, createPrimaryCalendarEvent, deletePrimaryCalendarEvent, updatePrimaryCalendarEvent } from "@/lib/google-calendar";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -133,3 +133,48 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+// 구글 캘린더 일정 수정 API
+export async function PATCH(request: Request) {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+    }
+
+    const body = (await request.json()) as {
+      eventId: string;
+      title?: string;
+      description?: string | null;
+      start?: string;
+      end?: string;
+    };
+
+    const { eventId, title, description, start, end } = body;
+
+    if (!eventId) {
+      return NextResponse.json({ error: "수정할 일정 ID가 누락되었습니다." }, { status: 400 });
+    }
+
+    const result = await updatePrimaryCalendarEvent(userId, eventId, {
+      title,
+      description,
+      start,
+      end,
+    });
+
+    return NextResponse.json({ success: true, event: result });
+  } catch (error) {
+    console.error("구글 일정 수정 에러:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Google Calendar 일정을 수정하지 못했습니다.",
+      },
+      { status: 500 }
+    );
+  }
+}
+

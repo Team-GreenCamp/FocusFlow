@@ -13,7 +13,7 @@ export default function MobileNav() {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant flex justify-around items-center h-16 z-50">
+    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-surface dark:bg-[#191f28] border-t border-outline-variant dark:border-t-neutral-800 flex justify-around items-center h-16 z-50">
       {menuItems.map((item) => {
         const isActive = pathname === item.path || (item.path === "/breakdown" && pathname.startsWith("/roadmaps/"));
         return (

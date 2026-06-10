@@ -193,3 +193,40 @@ export async function deletePrimaryCalendarEvent(userId: string, eventId: string
 
   return { success: true };
 }
+
+export async function updatePrimaryCalendarEvent(
+  userId: string,
+  eventId: string,
+  event: { title?: string; description?: string | null; start?: string; end?: string }
+) {
+  const accessToken = await getGoogleAccessToken(userId);
+
+  const body: {
+    summary?: string;
+    description?: string;
+    start?: { dateTime: string };
+    end?: { dateTime: string };
+  } = {};
+  if (event.title !== undefined) body.summary = event.title;
+  if (event.description !== undefined) body.description = event.description || "";
+  if (event.start !== undefined) body.start = { dateTime: event.start };
+  if (event.end !== undefined) body.end = { dateTime: event.end };
+
+
+  const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error?.message ?? "Google Calendar 일정을 수정하지 못했습니다.");
+  }
+
+  return data;
+}
+

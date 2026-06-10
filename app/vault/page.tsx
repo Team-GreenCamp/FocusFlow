@@ -2,102 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { parseMarkdown, getSectionStyle } from "@/lib/reflection-utils";
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileNav";
 import type { ReflectionSummary, RoadmapGoal } from "@/types/roadmap";
 
 type ActiveTab = "roadmaps" | "resources" | "bookmarked";
 
-interface ParsedSection {
-  title: string;
-  items: string[];
-}
 
-function parseMarkdown(md: string) {
-  const sections: ParsedSection[] = [];
-  const lines = md.split("\n");
-  let currentSection: ParsedSection | null = null;
 
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
 
-    // 헤더 매칭 (H1, H2, H3, H4 등 #으로 시작하는 행)
-    if (trimmed.startsWith("#")) {
-      const titleText = trimmed.replace(/^#+\s*/, "").trim();
-      
-      const isGlobalTitle = 
-        trimmed.startsWith("# ") || 
-        (titleText.includes("회고") && (trimmed.startsWith("## ") || titleText.endsWith("회고")));
 
-      if (isGlobalTitle) {
-        continue;
-      }
 
-      if (currentSection) {
-        sections.push(currentSection);
-      }
-      
-      const cleanedTitle = titleText
-        .replace(/^[\p{Emoji}\u2000-\u2BFF\s]+/gu, "") // 이모지 제거
-        .replace(/^#?\s*/, "") // 남은 샵 기호 제거
-        .replace(/^\d+\.\s*/, "") // 리스트 번호 제거
-        .trim();
-
-      currentSection = {
-        title: cleanedTitle,
-        items: []
-      };
-      continue;
-    }
-
-    // 목록 항목 또는 일반 단락 매칭
-    if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
-      if (currentSection) {
-        currentSection.items.push(trimmed.replace(/^[-*]\s*/, "").trim());
-      }
-    } else {
-      if (currentSection) {
-        currentSection.items.push(trimmed);
-      }
-    }
-  }
-
-  if (currentSection) {
-    sections.push(currentSection);
-  }
-
-  return sections;
-}
-
-function getSectionStyle(title: string) {
-  const t = title.toLowerCase();
-  if (t.includes("완료") || t.includes("수행") || t.includes("성공")) {
-    return {
-      bg: "bg-emerald-500/5 dark:bg-emerald-500/10",
-      border: "border-emerald-500/20 dark:border-emerald-500/30",
-      icon: "check_circle",
-      iconColor: "text-emerald-500",
-      accentLine: "bg-emerald-500",
-    };
-  }
-  if (t.includes("잘된") || t.includes("장점") || t.includes("칭찬") || t.includes("만족") || t.includes("피드백") || t.includes("반영")) {
-    return {
-      bg: "bg-sky-500/5 dark:bg-sky-500/10",
-      border: "border-sky-500/20 dark:border-sky-500/30",
-      icon: "auto_awesome",
-      iconColor: "text-sky-500",
-      accentLine: "bg-sky-500",
-    };
-  }
-  return {
-    bg: "bg-amber-500/5 dark:bg-amber-500/10",
-    border: "border-amber-500/20 dark:border-amber-500/30",
-    icon: "lightbulb",
-    iconColor: "text-amber-500",
-    accentLine: "bg-amber-500",
-  };
-}
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("ko-KR", {
@@ -208,7 +124,7 @@ export default function VaultPage() {
   };
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen">
+    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen">
       <Header />
 
 
@@ -244,7 +160,7 @@ export default function VaultPage() {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-3 w-full md:w-64 bg-surface-container-high rounded-full px-4 py-1.5 border border-outline-variant/30 mb-2 md:mb-0">
+          <div className="flex items-center gap-3 w-full md:w-64 bg-[#edf1f5] dark:bg-neutral-800/40 rounded-full px-4 py-1.5 border border-outline-variant/30 dark:border-neutral-700/50 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 mb-2 md:mb-0 transition-all">
             <span className="material-symbols-outlined text-on-surface-variant text-lg">search</span>
             <input
               className="bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder-on-surface-variant w-full outline-none"
@@ -284,7 +200,7 @@ export default function VaultPage() {
                       return (
                         <div
                           key={goal.id}
-                          className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30 hover:border-primary/50 transition-colors shadow-sm"
+                          className="bg-[#e9f7ef]/50 dark:bg-[#1d3528]/30 rounded-2xl p-6 border border-[#22a063]/20 dark:border-[#22a063]/10 hover:border-primary/50 transition-colors shadow-sm"
                         >
                           <div className="flex justify-between items-start gap-4 mb-3">
                             <div>
@@ -293,7 +209,7 @@ export default function VaultPage() {
                               </span>
                               <h4 className="font-bold text-lg mt-2 text-on-surface">{goal.title}</h4>
                             </div>
-                            <span className="text-xs text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">
+                            <span className="text-xs text-primary dark:text-[#a6e3bd] bg-[#e9f7ef] dark:bg-[#1d3528]/50 px-2.5 py-1 rounded-lg font-bold border border-[#22a063]/20 dark:border-[#22a063]/10">
                               {goal.steps.length}단계
                             </span>
                           </div>
@@ -341,7 +257,7 @@ export default function VaultPage() {
                       return (
                         <article
                           key={reflection.id}
-                          className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30 hover:border-secondary/50 transition-colors shadow-sm"
+                          className="bg-[#e9f7ef]/50 dark:bg-[#1d3528]/30 rounded-2xl p-6 border border-[#22a063]/20 dark:border-[#22a063]/10 hover:border-secondary/50 transition-colors shadow-sm"
                         >
                           <div className="flex justify-between items-start mb-2 gap-4">
                             <div>

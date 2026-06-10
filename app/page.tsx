@@ -53,6 +53,11 @@ export default function Home() {
   const [modalLoading, setModalLoading] = useState(false);
   const [modalError, setModalError] = useState("");
 
+  // 신규 이식: 구글 일정 양방향 편집 및 강제 동기화 관련 상태
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingEventId, setEditingEventId] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   // 비로그인용 슬라이딩 플레이스홀더 설정
   const placeholders = useMemo(() => [
     "예: 바디프로필 촬영을 위한 일주일 식단 구성 및 장보기",
@@ -261,6 +266,8 @@ export default function Home() {
   
   // A. 일반 일정 생성 폼 열기
   const openCreateEventModal = () => {
+    setIsEditMode(false);
+    setEditingEventId("");
     setModalTitle("");
     setModalDescription("");
     setModalDate(selectedDateStr);
@@ -273,6 +280,8 @@ export default function Home() {
 
   // B. 나의 업무(TaskStep) 연동하여 일정 폼 채우고 열기
   const openTaskSyncModal = (goalTitle: string, step: RoadmapStep) => {
+    setIsEditMode(false);
+    setEditingEventId("");
     setModalTitle(`[업무] ${step.title}`);
     setModalDescription(`목표: ${goalTitle}\n---\n설명: ${step.description}`);
     
@@ -292,8 +301,39 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  // C. 실제 구글 캘린더에 일정 등록 API 호출
-  const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
+  // 신규 C. 일정 클릭 시 수정 모드 폼 열기
+  const openEditEventModal = (event: CalendarEventSummary) => {
+    setIsEditMode(true);
+    setEditingEventId(event.id);
+    setModalTitle(event.title);
+    setModalDescription(event.description ?? "");
+    setModalStepId(""); // 수정 시에는 신규 바인딩 ID 생략
+
+    if (event.start) {
+      const parts = event.start.split("T");
+      setModalDate(parts[0]);
+      if (parts[1]) {
+        setModalStartTime(parts[1].slice(0, 5));
+      } else {
+        setModalStartTime("09:00");
+      }
+    } else {
+      setModalDate(selectedDateStr);
+      setModalStartTime("09:00");
+    }
+
+    if (event.end && event.end.includes("T")) {
+      setModalEndTime(event.end.split("T")[1].slice(0, 5));
+    } else {
+      setModalEndTime("10:00");
+    }
+
+    setModalError("");
+    setIsModalOpen(true);
+  };
+
+  // 신규 D. 생성 및 수정(PATCH) 통합 제출 핸들러
+  const handleCreateOrUpdateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!modalTitle.trim()) {
       setModalError("일정 제목을 입력해 주세요.");
@@ -307,38 +347,118 @@ export default function Home() {
       const startDateTime = `${modalDate}T${modalStartTime}:00`;
       const endDateTime = `${modalDate}T${modalEndTime}:00`;
 
-      // API 호출 시 stepId가 있으면 body에 함께 담아 전송하여 DB 바인딩을 유도합니다.
-      const response = await fetch("/api/calendar/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title: modalTitle,
-          description: modalDescription,
-          start: new Date(startDateTime).toISOString(),
-          end: new Date(endDateTime).toISOString(),
-          stepId: modalStepId || undefined
-        })
-      });
+      if (isEditMode) {
+        // 수정 모드: PATCH 요청
+        const response = await fetch("/api/calendar/events", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            eventId: editingEventId,
+            title: modalTitle,
+            description: modalDescription,
+            start: new Date(startDateTime).toISOString(),
+            end: new Date(endDateTime).toISOString()
+          })
+        });
 
-      const resData = await response.json();
+        const resData = await response.json();
+        if (!response.ok) {
+          throw new Error(resData.error ?? "구글 일정 수정에 실패했습니다.");
+        }
+      } else {
+        // 등록 모드: POST 요청
+        const response = await fetch("/api/calendar/events", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            title: modalTitle,
+            description: modalDescription,
+            start: new Date(startDateTime).toISOString(),
+            end: new Date(endDateTime).toISOString(),
+            stepId: modalStepId || undefined
+          })
+        });
 
-      if (!response.ok) {
-        throw new Error(resData.error ?? "구글 일정 등록에 실패했습니다.");
+        const resData = await response.json();
+        if (!response.ok) {
+          throw new Error(resData.error ?? "구글 일정 등록에 실패했습니다.");
+        }
       }
 
-      // 성공 시 즉각 모달을 닫고, 대시보드 리렌더링
+      // 성공 시 폼 초기화 및 새로고침
       setIsModalOpen(false);
+      setIsEditMode(false);
+      setEditingEventId("");
       setLoading(true);
       await loadDashboardData();
     } catch (err) {
-      setModalError(err instanceof Error ? err.message : "일정 등록 중 알 수 없는 에러가 발생했습니다.");
+      setModalError(err instanceof Error ? err.message : "요청 처리 중 알 수 없는 에러가 발생했습니다.");
     } finally {
       setModalLoading(false);
       setLoading(false);
     }
   };
+
+  // 신규 E. 달력 내 일정 드래그 앤 드롭 날짜/시간 업데이트 핸들러
+  const handleUpdateEventDate = async (eventId: string, targetDateStr: string) => {
+    const targetEvent = events.find((evt) => evt.id === eventId);
+    if (!targetEvent) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // 타임존 접미사 유지를 위해 원래 시각의 시간 부분만 추출해 이식
+      const oldStartISO = targetEvent.start || "";
+      const startTimePart = oldStartISO.includes("T") ? oldStartISO.split("T")[1] : "09:00:00";
+      const newStartISO = new Date(`${targetDateStr}T${startTimePart}`).toISOString();
+      
+      const oldEndISO = targetEvent.end || "";
+      const endTimePart = oldEndISO.includes("T") ? oldEndISO.split("T")[1] : "10:00:00";
+      const newEndISO = new Date(`${targetDateStr}T${endTimePart}`).toISOString();
+
+      const response = await fetch("/api/calendar/events", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          eventId,
+          start: newStartISO,
+          end: newEndISO
+        })
+      });
+
+      const resData = await response.json();
+      if (!response.ok) {
+        throw new Error(resData.error ?? "일정 이동 처리에 실패했습니다.");
+      }
+
+      await loadDashboardData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "일정 조율 중 에러가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 신규 F. 구글 캘린더 강제 즉시 동기화(새로고침) 핸들러
+  const handleRefreshCalendar = async () => {
+    setIsRefreshing(true);
+    setError("");
+    try {
+      await loadDashboardData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "구글 캘린더 동기화에 실패했습니다.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
 
   // D. 로드맵 업무(Goal) 전체 영구 삭제 통신 핸들러
   const deleteGoal = async (goalId: string, goalTitle: string) => {
@@ -395,14 +515,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen relative overflow-hidden">
-      {/* 백그라운드 리퀴드 글래스 블롭 */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[10%] left-[15%] w-[350px] h-[350px] rounded-full bg-primary/10 blur-[80px] animate-blob-1" />
-        <div className="absolute top-[25%] right-[15%] w-[450px] h-[450px] rounded-full bg-secondary/8 blur-[100px] animate-blob-2" />
-        <div className="absolute bottom-[20%] left-[25%] w-[380px] h-[380px] rounded-full bg-primary/8 blur-[90px] animate-blob-3" />
-      </div>
-
+    <div className="bg-bg-primary text-text-primary min-h-screen relative overflow-hidden">
       {/* Header */}
       <Header />
 
@@ -426,19 +539,19 @@ export default function Home() {
         ) : status === "authenticated" ? (
           // ==================== [ 로그인 상태 대시보드 뷰 (조립 구조) ] ====================
           <div className="w-full flex-grow flex flex-col gap-8 py-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/20 pb-5">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/10 pb-5">
               <div>
-                <h1 className="font-headline-lg text-3xl font-bold tracking-tight text-on-surface">
+                <h1 className="font-headline-lg text-3xl font-extrabold tracking-tight text-text-primary">
                   {session?.user?.name ? `${session.user.name}님의 몰입 대시보드` : "나의 몰입 대시보드"}
                 </h1>
-                <p className="text-on-surface-variant font-body-md mt-1">
+                <p className="text-text-secondary font-bold mt-1 text-sm">
                   구글 캘린더 달력과 나의 몰입 업무를 유기적으로 한눈에 분석하고 실행하세요.
                 </p>
               </div>
               <div className="flex gap-3">
                 <Link
                   href="/breakdown"
-                  className="px-5 py-2.5 bg-primary text-white font-bold rounded-xl shadow hover:bg-primary/95 transition-all text-sm flex items-center gap-2 hover:scale-[1.02] active:scale-95 duration-200"
+                  className="px-5 py-2.5 bg-[#22a063] text-white font-extrabold rounded-2xl shadow-sm hover:bg-[#1a824e] hover:shadow-md transition-all text-sm flex items-center gap-2 hover:scale-[1.01] active:scale-95 duration-200 border-none"
                 >
                   <span className="material-symbols-outlined text-sm font-bold">add</span>
                   업무 구체화하기
@@ -466,9 +579,9 @@ export default function Home() {
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
                 onToday={handleToday}
-                onOpenCreateModal={openCreateEventModal}
-                onDeleteEvent={deleteCalendarEvent}
-                formatTime={formatTime}
+                onUpdateEventDate={handleUpdateEventDate}
+                onRefreshCalendar={handleRefreshCalendar}
+                isRefreshing={isRefreshing}
               />
 
               {/* 우측 (4열 배정): 선택 일정 타임라인 및 몰입 할일 목록 */}
@@ -481,6 +594,7 @@ export default function Home() {
                   onOpenCreateModal={openCreateEventModal}
                   onDeleteEvent={deleteCalendarEvent}
                   formatTime={formatTime}
+                  onEditEvent={openEditEventModal}
                 />
 
                 {/* 2. 격리 추출된 몰입 할일 및 완료 진행율 종합 컴포넌트 */}
@@ -571,7 +685,12 @@ export default function Home() {
         setModalEndTime={setModalEndTime}
         modalError={modalError}
         modalLoading={modalLoading}
-        onSubmit={handleCreateEvent}
+        onSubmit={handleCreateOrUpdateEvent}
+        isEditMode={isEditMode}
+        onDelete={() => {
+          deleteCalendarEvent(editingEventId, modalTitle);
+          setIsModalOpen(false);
+        }}
       />
 
       {/* Mobile Nav */}

@@ -3,6 +3,7 @@ import { TaskStatus } from "@prisma/client";
 import { AiResponseError, generateDailyReflection } from "@/lib/ai/vertex";
 import { getCurrentUserId } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 
 export async function POST(request: Request) {
   try {
@@ -11,16 +12,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    const body = (await request.json()) as { memo?: string; goalId?: string };
-    const memo = body.memo?.trim();
-
-    if (!memo) {
-      return NextResponse.json({ error: "회고에 반영할 한 줄 메모를 입력해 주세요." }, { status: 400 });
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "올바르지 않은 JSON 요청 형식입니다." }, { status: 400 });
     }
 
-    if (body.goalId) {
+    const reflectionSchema = z.object({
+      memo: z
+        .string({ required_error: "회고에 반영할 한 줄 메모를 입력해 주세요." })
+        .trim()
+        .min(1, "회고에 반영할 한 줄 메모를 입력해 주세요."),
+      goalId: z.string().trim().optional().or(z.string().length(0)),
+    });
+
+    const validation = reflectionSchema.safeParse(body);
+    if (!validation.success) {
+      const errorMsg = validation.error.errors[0]?.message || "요청 데이터가 유효하지 않습니다.";
+      return NextResponse.json({ error: errorMsg }, { status: 400 });
+    }
+
+    const { memo, goalId } = validation.data;
+    const finalGoalId = goalId || undefined;
+
+    if (finalGoalId) {
       const goal = await prisma.goal.findFirst({
-        where: { id: body.goalId, userId },
+        where: { id: finalGoalId, userId },
         select: { id: true },
       });
 
@@ -34,11 +52,11 @@ export async function POST(request: Request) {
 
     const completedSteps = await prisma.taskStep.findMany({
       where: {
-      status: TaskStatus.DONE,
-      completedAt: { gte: since },
-      ...(body.goalId ? { goalId: body.goalId } : {}),
-      goal: { userId },
-    },
+        status: TaskStatus.DONE,
+        completedAt: { gte: since },
+        ...(finalGoalId ? { goalId: finalGoalId } : {}),
+        goal: { userId },
+      },
       orderBy: { completedAt: "asc" },
     });
 
@@ -53,7 +71,7 @@ export async function POST(request: Request) {
 
     const saved = await prisma.reflection.create({
       data: {
-        goalId: body.goalId,
+        goalId: finalGoalId || null,
         userId,
         date: since,
         memo,

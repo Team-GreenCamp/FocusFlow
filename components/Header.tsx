@@ -8,7 +8,7 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-surface shadow-sm border-b border-outline-variant flex justify-between items-center px-6 md:px-margin-desktop h-16">
+    <header className="fixed top-0 left-0 w-full z-50 bg-surface dark:bg-[#191f28]/95 shadow-sm border-b border-outline-variant dark:border-neutral-800 flex justify-between items-center px-6 md:px-margin-desktop h-16">
       <div className="flex items-center gap-4">
         <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">
           FocusFlow

@@ -26,7 +26,7 @@ export default function Sidebar() {
       <aside
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className={`fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-white/10 dark:bg-black/30 backdrop-blur-2xl flex flex-col p-gutter pb-16 gap-unit hidden md:flex border-r border-white/20 dark:border-white/10 transition-all duration-300 ease-out z-50 shadow-[0_8px_32px_0_rgba(0,65,200,0.15)] ${
+        className={`fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-white/10 dark:bg-black/30 backdrop-blur-2xl flex flex-col p-gutter pb-16 gap-unit hidden md:flex border-r border-white/20 dark:border-white/10 transition-all duration-300 ease-out z-50 shadow-[0_8px_32px_0_rgba(34,160,99,0.15)] ${
           isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
         }`}
       >

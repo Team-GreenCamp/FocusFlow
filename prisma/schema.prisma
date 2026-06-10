@@ -47,6 +47,8 @@ model TaskStep {
   childSteps      TaskStep[]  @relation("StepChildren")
 
   @@index([goalId, parentStepId, order])
+  @@index([goalId])
+  @@index([parentStepId])
 }
 
 model DailyNote {
@@ -73,6 +75,7 @@ model Reflection {
 
   @@index([userId])
   @@index([date])
+  @@index([goalId])
 }
 
 model User {

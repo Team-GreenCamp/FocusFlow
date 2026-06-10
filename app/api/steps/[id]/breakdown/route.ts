@@ -32,22 +32,31 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
       stepDescription: step.description,
     });
 
-    // 부모 단계는 컨테이너로 유지하고, 첫 하위 행동만 즉시 실행 가능하게 엽니다.
-    await prisma.taskStep.createMany({
-      data: breakdown.steps.map((child, index) => ({
-        goalId: step.goalId,
-        parentStepId: step.id,
-        order: index,
-        title: child.title,
-        description: child.description,
-        estimateMinutes: child.estimateMinutes,
-        status: index === 0 ? TaskStatus.ACTIVE : TaskStatus.LOCKED,
-      })),
-    });
+    // 트랜잭션을 도입하여 하위 단계 분할 및 부모 단계 상태 변경을 원자적으로 수행합니다.
+    const goal = await prisma.$transaction(async (tx) => {
+      // 부모 단계는 컨테이너로 유지하고, 첫 하위 행동만 즉시 실행 가능하게 엽니다.
+      await tx.taskStep.createMany({
+        data: breakdown.steps.map((child, index) => ({
+          goalId: step.goalId,
+          parentStepId: step.id,
+          order: index,
+          title: child.title,
+          description: child.description,
+          estimateMinutes: child.estimateMinutes,
+          status: index === 0 ? TaskStatus.ACTIVE : TaskStatus.LOCKED,
+        })),
+      });
 
-    const goal = await prisma.goal.findFirstOrThrow({
-      where: { id: step.goalId, userId },
-      include: { steps: true },
+      // 부모 단계의 상태를 ACTIVE로 변경하여 분할 후에도 작업 상태를 유지합니다.
+      await tx.taskStep.update({
+        where: { id: step.id },
+        data: { status: TaskStatus.ACTIVE },
+      });
+
+      return await tx.goal.findFirstOrThrow({
+        where: { id: step.goalId, userId },
+        include: { steps: true },
+      });
     });
 
     return NextResponse.json({ goal: serializeGoal(goal) });
