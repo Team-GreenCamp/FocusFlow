@@ -6,8 +6,8 @@
 
 :root {
   color-scheme: light;
-  background: #faf8ff;
-  color: #131b2e;
+  background: #f2f4f6;
+  color: #191f28;
 }
 
 * {
@@ -17,8 +17,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #faf8ff;
-  color: #131b2e;
+  background-color: #f2f4f6;
+  color: #191f28;
   font-family: 'Geist', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -34,22 +34,23 @@ textarea {
   vertical-align: middle;
 }
 
+/* 토스 스타일의 정갈하고 둥근 백색 플레이트 카드 */
 .glass-card {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(24px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px 0 rgba(0, 65, 200, 0.06);
+  background: #ffffff;
+  border: 1px solid #edf1f5;
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.02);
+  border-radius: 24px;
 }
 
 .dark .glass-card {
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(24px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  background: rgba(25, 30, 40, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 24px;
 }
 
 .momentum-gradient {
-  background: linear-gradient(135deg, #0041c8 0%, #0055ff 100%);
+  background: linear-gradient(135deg, #3182f6 0%, #1b64da 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -57,19 +58,19 @@ textarea {
 }
 
 .accent-glow {
-  box-shadow: 0 0 20px rgba(195, 244, 0, 0.3);
+  box-shadow: 0 0 20px rgba(49, 130, 246, 0.15);
 }
 
-/* Liquid Blob Animations */
+/* Liquid Blob Animations - 토스 스타일에선 불투명도를 대폭 낮춰 사용 */
 @keyframes liquid-blob {
   0% {
     transform: translate(0px, 0px) scale(1);
   }
   33% {
-    transform: translate(40px, -60px) scale(1.15);
+    transform: translate(30px, -40px) scale(1.1);
   }
   66% {
-    transform: translate(-30px, 40px) scale(0.9);
+    transform: translate(-20px, 30px) scale(0.95);
   }
   100% {
     transform: translate(0px, 0px) scale(1);
@@ -77,28 +78,33 @@ textarea {
 }
 
 .animate-blob-1 {
-  animation: liquid-blob 20s infinite alternate ease-in-out;
+  animation: liquid-blob 25s infinite alternate ease-in-out;
 }
 
 .animate-blob-2 {
-  animation: liquid-blob 25s infinite alternate-reverse ease-in-out 2s;
+  animation: liquid-blob 30s infinite alternate-reverse ease-in-out 3s;
 }
 
 .animate-blob-3 {
-  animation: liquid-blob 30s infinite alternate ease-in-out 4s;
+  animation: liquid-blob 35s infinite alternate ease-in-out 6s;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - 둥글고 얇은 토스 스타일 */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #f2f3ff;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c3c5d9;
+  background: #d1d6db;
   border-radius: 10px;
 }
+::-webkit-scrollbar-thumb:hover {
+  background: #b0b8c1;
+}
+
 
 /* Placeholder animation */
 @keyframes placeholder-fade-in-up {
