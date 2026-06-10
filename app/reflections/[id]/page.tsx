@@ -131,13 +131,7 @@ export default async function ReflectionDetailPage({ params }: Props) {
   }).format(new Date(reflection.createdAt));
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen relative overflow-hidden">
-      {/* 백그라운드 리퀴드 글래스 블롭 */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] rounded-full bg-primary/10 blur-[90px] animate-blob-1" />
-        <div className="absolute bottom-[15%] right-[10%] w-[500px] h-[500px] rounded-full bg-secondary/8 blur-[110px] animate-blob-2" />
-      </div>
-
+    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen relative overflow-hidden">
       <Header />
 
       <main className="relative z-10 pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-3xl mx-auto w-full min-h-screen flex flex-col">

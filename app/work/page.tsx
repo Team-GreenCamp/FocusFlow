@@ -194,7 +194,7 @@ export default function WorkPage() {
   }
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen">
+    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen">
       <Header />
 
       <main className="pt-24 px-margin-mobile md:px-gutter pb-24 max-w-5xl mx-auto w-full min-h-screen">
@@ -211,7 +211,7 @@ export default function WorkPage() {
           <button
             type="button"
             onClick={loadWorkData}
-            className="rounded-xl border border-outline-variant bg-white px-4 py-2 text-sm font-bold text-on-surface transition hover:bg-surface-container-low"
+            className="rounded-xl bg-primary text-white px-5 py-2 text-sm font-bold shadow-sm hover:bg-primary/95 hover:scale-[1.01] active:scale-95 transition-all duration-200"
           >
             새로고침
           </button>
@@ -240,16 +240,16 @@ export default function WorkPage() {
               ) : (
                 <div className="space-y-4">
                   {activeSteps.map(({ goal, step }) => (
-                    <article key={step.id} className="rounded-2xl border border-outline-variant/30 bg-white/70 p-4">
+                    <article key={step.id} className="rounded-2xl border border-outline-variant/30 dark:border-neutral-700/50 bg-white/70 dark:bg-neutral-800/40 p-4">
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <p className="text-xs font-bold text-primary">{goal.title}</p>
-                          <h3 className="mt-1 font-bold text-on-surface">{step.title}</h3>
-                          <p className="mt-2 text-sm leading-6 text-on-surface-variant">{step.description}</p>
+                          <h3 className="mt-1 font-bold text-on-surface dark:text-[#f5f5f7]">{step.title}</h3>
+                          <p className="mt-2 text-sm leading-6 text-on-surface-variant dark:text-[#a9abb6]">{step.description}</p>
                         </div>
                       </div>
                       <textarea
-                        className="mt-4 min-h-20 w-full resize-none rounded-xl border border-outline-variant bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-primary"
+                        className="mt-4 min-h-20 w-full resize-none rounded-xl border border-outline-variant dark:border-neutral-700 bg-white dark:bg-neutral-800/60 p-3 text-sm text-on-surface dark:text-[#f5f5f7] outline-none focus:ring-2 focus:ring-primary"
                         placeholder="완료하면서 남길 짧은 메모"
                         value={memoByStepId[step.id] ?? ""}
                         onChange={(event) => setMemoByStepId((prev) => ({ ...prev, [step.id]: event.target.value }))}
@@ -266,7 +266,7 @@ export default function WorkPage() {
                           </button>
                           <Link
                             href={`/roadmaps/${goal.id}`}
-                            className="rounded-lg border border-outline-variant px-4 py-2 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low"
+                            className="rounded-lg border border-outline-variant dark:border-neutral-700 px-4 py-2 text-xs font-bold text-on-surface-variant dark:text-neutral-300 transition hover:bg-surface-container-low"
                           >
                             업무 상세 보기
                           </Link>
@@ -310,17 +310,17 @@ export default function WorkPage() {
                     {calendarEvents.map((event) => {
                       const isAlreadyCreated = goals.some((goal) => goal.googleEventId === event.id);
                       return (
-                        <article key={event.id} className="rounded-2xl border border-outline-variant/30 bg-white/70 p-4">
+                        <article key={event.id} className="rounded-2xl border border-outline-variant/30 dark:border-neutral-700/50 bg-white/70 dark:bg-neutral-800/40 p-4">
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <h3 className="text-sm font-bold text-on-surface">{event.title}</h3>
-                              {event.location ? <p className="mt-1 text-xs text-on-surface-variant">{event.location}</p> : null}
+                              <h3 className="text-sm font-bold text-on-surface dark:text-[#f5f5f7]">{event.title}</h3>
+                              {event.location ? <p className="mt-1 text-xs text-on-surface-variant dark:text-[#a9abb6]">{event.location}</p> : null}
                             </div>
                             <span className="shrink-0 text-xs font-bold text-primary">{formatEventTime(event)}</span>
                           </div>
                           <div className="mt-3 flex flex-wrap gap-2 items-center">
                             {isAlreadyCreated ? (
-                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 border border-emerald-200">
+                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40">
                                 <span>등록 완료</span>
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                               </span>
@@ -339,7 +339,7 @@ export default function WorkPage() {
                                 href={event.htmlLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="rounded-lg border border-outline-variant px-3 py-2 text-xs font-bold text-on-surface-variant transition hover:bg-surface-container-low"
+                                className="rounded-lg border border-outline-variant dark:border-neutral-700 px-3 py-2 text-xs font-bold text-on-surface-variant dark:text-neutral-300 transition hover:bg-surface-container-low"
                               >
                                 캘린더 열기
                               </a>
@@ -366,10 +366,10 @@ export default function WorkPage() {
                 ) : (
                   <div className="space-y-2">
                     {completedToday.map(({ goal, step }) => (
-                      <div key={step.id} className="rounded-xl bg-surface-container-lowest p-3">
+                      <div key={step.id} className="rounded-xl bg-surface-container-lowest dark:bg-neutral-800/40 border border-transparent dark:border-neutral-700/50 p-3">
                         <p className="text-xs font-bold text-primary">{goal.title}</p>
-                        <p className="mt-1 text-sm font-semibold text-on-surface">{step.title}</p>
-                        {step.memo ? <p className="mt-1 text-xs text-on-surface-variant">{step.memo}</p> : null}
+                        <p className="mt-1 text-sm font-semibold text-on-surface dark:text-[#f5f5f7]">{step.title}</p>
+                        {step.memo ? <p className="mt-1 text-xs text-on-surface-variant dark:text-[#a9abb6]">{step.memo}</p> : null}
                       </div>
                     ))}
                   </div>

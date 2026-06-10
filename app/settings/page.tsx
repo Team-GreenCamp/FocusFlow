@@ -47,11 +47,21 @@ export default function SettingsPage() {
       "focusflow-settings",
       JSON.stringify({ workViewSettings, theme, soundEnabled }),
     );
+
+    // [기존 주석 보존] 저장하기 버튼을 누를 때 테마 설정을 최종적으로 화면에 반영합니다.
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+
     setSaveMessage("설정이 이 브라우저에 저장되었습니다.");
   };
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen">
+    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen">
       {/* Header */}
       <Header />
 
@@ -83,11 +93,11 @@ export default function SettingsPage() {
             </h3>
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="flex-shrink-0">
-                <div className="w-24 h-24 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant">
+                <div className="w-24 h-24 rounded-full bg-[#f2f4f6] dark:bg-[#1d3528]/10 overflow-hidden border border-[#edf1f5] dark:border-[#22a063]/10">
                   <img
                     alt="User Profile Avatar"
                     className="w-full h-full object-cover"
-                    src={session?.user?.image ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(session?.user?.name ?? "User")}&background=0041c8&color=fff`}
+                    src={session?.user?.image ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(session?.user?.name ?? "User")}&background=22a063&color=fff`}
                   />
                 </div>
               </div>
@@ -96,7 +106,7 @@ export default function SettingsPage() {
                   <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5">
                     이름
                   </span>
-                  <div className="w-full max-w-md bg-surface-container-high/40 border border-outline-variant/40 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
+                  <div className="w-full max-w-md bg-[#e9f7ef]/30 dark:bg-[#1d3528]/10 border border-[#22a063]/20 dark:border-[#22a063]/10 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
                     {session?.user?.name ?? "로그인 정보 없음"}
                   </div>
                 </div>
@@ -104,7 +114,7 @@ export default function SettingsPage() {
                   <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5">
                     이메일 주소
                   </span>
-                  <div className="w-full max-w-md bg-surface-container-high/40 border border-outline-variant/40 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
+                  <div className="w-full max-w-md bg-[#e9f7ef]/30 dark:bg-[#1d3528]/10 border border-[#22a063]/20 dark:border-[#22a063]/10 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
                     {session?.user?.email ?? "계정 정보가 없습니다."}
                   </div>
                 </div>
@@ -124,15 +134,15 @@ export default function SettingsPage() {
                   캘린더 조회 기간 (일)
                 </label>
                 <select
-                  className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  className="w-full max-w-md bg-white dark:bg-neutral-800 border border-[#edf1f5] dark:border-neutral-700 rounded-lg px-4 py-2.5 text-on-surface dark:text-[#f5f5f7] focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   value={workViewSettings.calendarDays}
                   onChange={(e) =>
                     setWorkViewSettings({ ...workViewSettings, calendarDays: parseInt(e.target.value) })
                   }
                 >
-                  <option value={3}>3일</option>
-                  <option value={7}>7일 (기본)</option>
-                  <option value={14}>14일</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={3}>3일</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={7}>7일 (기본)</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={14}>14일</option>
                 </select>
               </div>
               <div>
@@ -140,15 +150,15 @@ export default function SettingsPage() {
                   진행 중 작업 표시 수
                 </label>
                 <select
-                  className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  className="w-full max-w-md bg-white dark:bg-neutral-800 border border-[#edf1f5] dark:border-neutral-700 rounded-lg px-4 py-2.5 text-on-surface dark:text-[#f5f5f7] focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   value={workViewSettings.visibleActiveTasks}
                   onChange={(e) =>
                     setWorkViewSettings({ ...workViewSettings, visibleActiveTasks: parseInt(e.target.value) })
                   }
                 >
-                  <option value={3}>3개</option>
-                  <option value={5}>5개 (기본)</option>
-                  <option value={10}>10개</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={3}>3개</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={5}>5개 (기본)</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={10}>10개</option>
                 </select>
               </div>
               <div>
@@ -156,15 +166,15 @@ export default function SettingsPage() {
                   캘린더 일정 표시 수
                 </label>
                 <select
-                  className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  className="w-full max-w-md bg-white dark:bg-neutral-800 border border-[#edf1f5] dark:border-neutral-700 rounded-lg px-4 py-2.5 text-on-surface dark:text-[#f5f5f7] focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   value={workViewSettings.visibleCalendarEvents}
                   onChange={(e) =>
                     setWorkViewSettings({ ...workViewSettings, visibleCalendarEvents: parseInt(e.target.value) })
                   }
                 >
-                  <option value={5}>5개</option>
-                  <option value={10}>10개 (기본)</option>
-                  <option value={20}>20개</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={5}>5개</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={10}>10개 (기본)</option>
+                  <option className="bg-white dark:bg-neutral-800 text-on-surface dark:text-[#f5f5f7]" value={20}>20개</option>
                 </select>
               </div>
               <div>
@@ -172,7 +182,7 @@ export default function SettingsPage() {
                   완료 업무 표시 수
                 </label>
                 <input
-                  className="w-full max-w-md bg-white dark:bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  className="w-full max-w-md bg-white dark:bg-neutral-800 border border-[#edf1f5] dark:border-neutral-700 rounded-lg px-4 py-2.5 text-on-surface dark:text-[#f5f5f7] focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   type="number"
                   min="1"
                   max="20"
@@ -197,7 +207,7 @@ export default function SettingsPage() {
                   <h4 className="text-sm font-semibold text-on-surface">테마 설정</h4>
                   <p className="text-xs text-on-surface-variant mt-0.5">앱 화면 색상 테마</p>
                 </div>
-                <div className="flex border border-outline-variant/30 rounded-lg overflow-hidden bg-surface-container-high">
+                <div className="flex border border-[#22a063]/20 dark:border-[#22a063]/10 rounded-lg overflow-hidden bg-[#e9f7ef]/50 dark:bg-[#1d3528]/20">
                   <button
                     type="button"
                     onClick={() => setTheme("light")}
@@ -231,7 +241,7 @@ export default function SettingsPage() {
                     checked={soundEnabled}
                     onChange={(e) => setSoundEnabled(e.target.checked)}
                   />
-                  <div className="w-11 h-6 bg-surface-container-highest rounded-full peer peer-focus:ring-2 peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-neutral-200 dark:bg-[#1d3528]/30 rounded-full peer peer-focus:ring-2 peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>

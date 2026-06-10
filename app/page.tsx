@@ -515,14 +515,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#f2f4f6] text-[#191f28] min-h-screen relative overflow-hidden">
-      {/* 백그라운드 리퀴드 글래스 블롭 - 토스 톤에 맞추어 불투명도 축소 */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[10%] left-[15%] w-[350px] h-[350px] rounded-full bg-[#3182f6]/3 blur-[100px] animate-blob-1" />
-        <div className="absolute top-[25%] right-[15%] w-[450px] h-[450px] rounded-full bg-[#3182f6]/2 blur-[120px] animate-blob-2" />
-        <div className="absolute bottom-[20%] left-[25%] w-[380px] h-[380px] rounded-full bg-[#3182f6]/2 blur-[90px] animate-blob-3" />
-      </div>
-
+    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen relative overflow-hidden">
       {/* Header */}
       <Header />
 
@@ -558,7 +551,7 @@ export default function Home() {
               <div className="flex gap-3">
                 <Link
                   href="/breakdown"
-                  className="px-5 py-2.5 bg-[#3182f6] text-white font-extrabold rounded-2xl shadow-sm hover:bg-[#1b64da] hover:shadow-md transition-all text-sm flex items-center gap-2 hover:scale-[1.01] active:scale-95 duration-200 border-none"
+                  className="px-5 py-2.5 bg-[#22a063] text-white font-extrabold rounded-2xl shadow-sm hover:bg-[#1a824e] hover:shadow-md transition-all text-sm flex items-center gap-2 hover:scale-[1.01] active:scale-95 duration-200 border-none"
                 >
                   <span className="material-symbols-outlined text-sm font-bold">add</span>
                   업무 구체화하기

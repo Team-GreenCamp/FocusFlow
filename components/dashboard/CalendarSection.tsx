@@ -49,12 +49,12 @@ export default function CalendarSection({
           href="https://calendar.google.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="font-headline-sm text-lg font-bold text-[#191f28] flex items-center gap-2 group hover:text-[#3182f6] transition-colors cursor-pointer"
+          className="font-headline-sm text-lg font-bold text-[#191f28] flex items-center gap-2 group hover:text-[#22a063] transition-colors cursor-pointer"
           title="구글 캘린더 새 창에서 열기"
         >
-          <span className="material-symbols-outlined text-[#3182f6] group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
+          <span className="material-symbols-outlined text-[#22a063] group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
           <span>구글 캘린더 달력</span>
-          <span className="material-symbols-outlined text-[#8b95a1] text-sm group-hover:text-[#3182f6] transition-colors">open_in_new</span>
+          <span className="material-symbols-outlined text-[#8b95a1] text-sm group-hover:text-[#22a063] transition-colors">open_in_new</span>
         </a>
         
         {/* 달력 컨트롤러 */}
@@ -64,11 +64,11 @@ export default function CalendarSection({
             <button
               onClick={onRefreshCalendar}
               disabled={isRefreshing}
-              className="p-1.5 bg-white border border-[#edf1f5] text-[#4e5968] hover:text-[#3182f6] hover:bg-[#f2f4f6] rounded-xl transition-all active:scale-95 flex items-center justify-center disabled:opacity-60 shadow-sm"
+              className="p-1.5 bg-primary border-none text-white hover:bg-primary/95 rounded-xl transition-all active:scale-95 flex items-center justify-center disabled:opacity-60 shadow-sm"
               title="구글 캘린더와 즉시 동기화"
               type="button"
             >
-              <span className={`material-symbols-outlined text-base ${isRefreshing ? "animate-spin text-[#3182f6]" : ""}`}>
+              <span className={`material-symbols-outlined text-base text-white ${isRefreshing ? "animate-spin" : ""}`}>
                 autorenew
               </span>
             </button>
@@ -76,26 +76,26 @@ export default function CalendarSection({
 
           <button
             onClick={onToday}
-            className="px-3.5 py-1.5 bg-white border border-[#edf1f5] text-[#4e5968] text-xs font-bold rounded-xl hover:bg-[#f2f4f6] hover:text-[#191f28] transition-all shadow-sm"
+            className="px-3.5 py-1.5 bg-white dark:bg-neutral-800 border border-[#edf1f5] dark:border-neutral-700 text-[#4e5968] dark:text-neutral-300 text-xs font-bold rounded-xl hover:bg-[#f2f4f6] dark:hover:bg-neutral-700 hover:text-[#191f28] dark:hover:text-white transition-all shadow-sm"
             type="button"
           >
             오늘
           </button>
-          <div className="flex items-center bg-white border border-[#edf1f5] rounded-xl px-1.5 py-0.5 shadow-sm">
+          <div className="flex items-center bg-white dark:bg-neutral-800 border border-[#edf1f5] dark:border-neutral-700 rounded-xl px-1.5 py-0.5 shadow-sm">
             <button
               onClick={onPrevMonth}
-              className="p-1 text-[#8b95a1] hover:text-[#3182f6] transition-colors flex items-center justify-center"
+              className="p-1 text-[#8b95a1] hover:text-[#22a063] transition-colors flex items-center justify-center"
               aria-label="이전 달"
               type="button"
             >
               <span className="material-symbols-outlined text-base">chevron_left</span>
             </button>
-            <span className="text-xs font-bold text-[#191f28] px-2.5 min-w-[80px] text-center">
+            <span className="text-xs font-bold text-[#191f28] dark:text-[#f5f5f7] px-2.5 min-w-[80px] text-center">
               {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
             </span>
             <button
               onClick={onNextMonth}
-              className="p-1 text-[#8b95a1] hover:text-[#3182f6] transition-colors flex items-center justify-center"
+              className="p-1 text-[#8b95a1] hover:text-[#22a063] transition-colors flex items-center justify-center"
               aria-label="다음 달"
               type="button"
             >
@@ -106,16 +106,16 @@ export default function CalendarSection({
       </div>
 
       {/* 실제 달력 그리드 카드 - 토스 화이트 플레이트 스타일 적용 */}
-      <div className="glass-card p-6 rounded-3xl border border-[#edf1f5] shadow-sm">
+      <div className="glass-card p-6 rounded-3xl border border-[#edf1f5] dark:border-neutral-700/50 shadow-sm">
         {/* 요일 헤더 */}
         <div className="grid grid-cols-7 gap-1 text-center font-bold text-xs text-[#8b95a1] mb-4">
-          <div className="text-[#ff4b4b] py-1">일</div>
+          <div className="text-[#ff4b4b] dark:text-red-400 py-1">일</div>
           <div className="py-1">월</div>
           <div className="py-1">화</div>
           <div className="py-1">수</div>
           <div className="py-1">목</div>
           <div className="py-1">금</div>
-          <div className="text-[#3182f6] py-1">토</div>
+          <div className="text-[#3182f6] dark:text-sky-400 py-1">토</div>
         </div>
 
         {/* 42칸 날짜 셀 격자 */}
@@ -157,13 +157,13 @@ export default function CalendarSection({
                 }}
                 className={`min-h-[75px] md:min-h-[95px] p-2 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between select-none ${
                   isDragOver
-                    ? "bg-[#e8f3ff]/60 border-[#3182f6] border-dashed ring-2 ring-[#3182f6]/20"
+                    ? "bg-[#e9f7ef]/60 dark:bg-[#1d3528]/40 border-[#22a063] border-dashed ring-2 ring-[#22a063]/20"
                     : isSelected
-                      ? "bg-[#e8f3ff] border-[#3182f6] ring-1 ring-[#3182f6]"
+                      ? "bg-[#e9f7ef] dark:bg-[#1d3528]/40 border-[#22a063] ring-1 ring-[#22a063]"
                       : isToday
-                        ? "bg-[#edf3fc] border-[#b6cfff]"
+                        ? "bg-[#edfbf2] dark:bg-[#1d3528]/20 border-[#a6e3bd] dark:border-[#22a063]/30"
                         : isCurrentMonth
-                          ? "bg-white border-[#edf1f5] hover:border-[#3182f6]/40"
+                          ? "bg-white dark:bg-neutral-800 border-[#edf1f5] dark:border-neutral-700/60 hover:border-[#22a063]/40"
                           : "bg-transparent border-transparent opacity-35 hover:opacity-50"
                 }`}
               >
@@ -171,18 +171,18 @@ export default function CalendarSection({
                   <span
                     className={`text-xs font-bold leading-none w-5.5 h-5.5 flex items-center justify-center rounded-full ${
                       isToday
-                        ? "bg-[#3182f6] text-white shadow-sm"
+                        ? "bg-[#22a063] text-white shadow-sm"
                         : dayOfWeek === 0
-                          ? "text-[#ff4b4b]"
+                          ? "text-[#ff4b4b] dark:text-red-400"
                           : dayOfWeek === 6
-                            ? "text-[#3182f6]"
-                            : "text-[#191f28]"
+                            ? "text-[#3182f6] dark:text-sky-400"
+                            : "text-[#191f28] dark:text-[#f5f5f7]"
                     }`}
                   >
                     {day}
                   </span>
                   {dayEvents.length > 2 && (
-                    <span className="text-[9px] font-bold text-[#3182f6] bg-[#e8f3ff] px-1.5 py-0.5 rounded-full shrink-0">
+                    <span className="text-[9px] font-bold text-[#22a063] bg-[#e9f7ef] dark:bg-[#1d3528]/50 px-1.5 py-0.5 rounded-full shrink-0">
                       +{dayEvents.length - 2}
                     </span>
                   )}
@@ -198,7 +198,7 @@ export default function CalendarSection({
                         e.stopPropagation();
                         e.dataTransfer.setData("text/plain", event.id);
                       }}
-                      className="text-[9px] md:text-[10px] font-bold bg-[#e8f3ff] text-[#3182f6] truncate px-2 py-0.5 rounded-lg border-none line-clamp-1 cursor-grab active:cursor-grabbing hover:bg-[#d4e9ff] transition-colors"
+                      className="text-[9px] md:text-[10px] font-bold bg-[#e9f7ef] dark:bg-[#1d3528]/50 text-[#22a063] dark:text-[#a6e3bd] truncate px-2 py-0.5 rounded-lg border-none line-clamp-1 cursor-grab active:cursor-grabbing hover:bg-[#d5f3e2] dark:hover:bg-[#1d3528]/80 transition-colors"
                     >
                       {event.title}
                     </div>

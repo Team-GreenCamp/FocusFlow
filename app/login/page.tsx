@@ -46,14 +46,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen relative overflow-hidden flex flex-col justify-between">
-      {/* 백그라운드 리퀴드 글래스 블롭 */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[10%] left-[15%] w-[350px] h-[350px] rounded-full bg-primary/10 blur-[80px] animate-blob-1" />
-        <div className="absolute top-[25%] right-[15%] w-[450px] h-[450px] rounded-full bg-secondary/8 blur-[100px] animate-blob-2" />
-        <div className="absolute bottom-[20%] left-[25%] w-[380px] h-[380px] rounded-full bg-primary/8 blur-[90px] animate-blob-3" />
-      </div>
-
+    <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen relative overflow-hidden flex flex-col justify-between">
       {/* 헤더 */}
       <header className="relative z-10 w-full px-6 md:px-margin-desktop h-16 flex items-center">
         <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">

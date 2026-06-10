@@ -50,7 +50,7 @@ textarea {
 }
 
 .momentum-gradient {
-  background: linear-gradient(135deg, #3182f6 0%, #1b64da 100%);
+  background: linear-gradient(135deg, #22a063 0%, #1a824e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -58,7 +58,7 @@ textarea {
 }
 
 .accent-glow {
-  box-shadow: 0 0 20px rgba(49, 130, 246, 0.15);
+  box-shadow: 0 0 20px rgba(34, 160, 99, 0.15);
 }
 
 /* Liquid Blob Animations - 토스 스타일에선 불투명도를 대폭 낮춰 사용 */
@@ -120,4 +120,38 @@ textarea {
 
 .animate-placeholder-in {
   animation: placeholder-fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 다크 모드 전용 텍스트 가독성 개선 스타일 오버라이드 */
+.dark .text-\[\#191f28\] {
+  color: #f5f5f7 !important;
+}
+.dark .text-\[\#4e5968\] {
+  color: #a9abb6 !important;
+}
+.dark .text-on-surface {
+  color: #f5f5f7 !important;
+}
+.dark .text-on-surface-variant {
+  color: #a9abb6 !important;
+}
+.dark .text-on-background {
+  color: #f5f5f7 !important;
+}
+.dark .text-ink {
+  color: #f5f7f6 !important;
+}
+
+/* 브라우저 네이티브 날짜/시간 피커 및 select 드롭다운 다크 모드 강제 연동 */
+.dark {
+  color-scheme: dark;
+}
+.dark body {
+  background-color: #121212;
+  color: #f5f5f7;
+}
+.dark input,
+.dark select,
+.dark textarea {
+  color-scheme: dark;
 }
