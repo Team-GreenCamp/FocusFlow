@@ -3,7 +3,7 @@ import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FocusFlow AI 업무 구체화 엔진",
+  title: "뚜잇 - AI 업무 구체화 서비스",
   description: "추상 업무를 구체화하고 회고 피드백을 생성하는 AI 업무 관리 서비스",
 };
 

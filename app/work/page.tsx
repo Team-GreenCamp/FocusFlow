@@ -169,6 +169,45 @@ export default function WorkPage() {
     }
   }
 
+  async function regenerateRoadmapFromCalendar(event: CalendarEventSummary, goal: RoadmapGoal) {
+    if (!confirm(`"${goal.title}" 업무를 현재 캘린더 내용으로 다시 생성하시겠습니까?\n기존 단계와 완료 기록은 새 단계로 교체됩니다.`)) {
+      return;
+    }
+
+    setWorkingId(event.id);
+    setCalendarError("");
+
+    const context = [
+      event.start ? `시작: ${event.start}` : "",
+      event.end ? `종료: ${event.end}` : "",
+      event.location ? `장소: ${event.location}` : "",
+      event.description ? `설명: ${event.description}` : "",
+      "이 캘린더 일정을 실제 실행 가능한 준비/수행/마무리 업무로 구체화하세요.",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    try {
+      // 최신 캘린더 내용을 기준으로 기존 목표의 실행 단계만 교체합니다.
+      const response = await fetch(`/api/roadmaps/${goal.id}/regenerate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ goal: event.title, context }),
+      });
+      const data = (await response.json()) as { goal?: RoadmapGoal; error?: string };
+
+      if (!response.ok || !data.goal) {
+        throw new Error(data.error ?? "캘린더 일정 기반 업무 재생성에 실패했습니다.");
+      }
+
+      router.push(`/roadmaps/${data.goal.id}`);
+    } catch (requestError) {
+      setCalendarError(requestError instanceof Error ? requestError.message : "캘린더 일정 기반 업무 재생성에 실패했습니다.");
+    } finally {
+      setWorkingId(null);
+    }
+  }
+
   async function deleteGoal(goalId: string, goalTitle: string) {
     if (!confirm(`"${goalTitle}" 업무를 정말로 삭제하시겠습니까?\n이 목표에 포함된 모든 단계가 함께 영구 삭제됩니다.`)) {
       return;
@@ -321,7 +360,7 @@ export default function WorkPage() {
                 ) : (
                   <div className="space-y-3">
                     {calendarEvents.map((event) => {
-                      const isAlreadyCreated = goals.some((goal) => goal.googleEventId === event.id);
+                      const linkedGoal = goals.find((goal) => goal.googleEventId === event.id);
                       return (
                         <article key={event.id} className="rounded-2xl border border-outline-variant/30 dark:border-neutral-700/50 bg-surface-color/70 dark:bg-surface-color/40 p-4">
                           <div className="flex items-start justify-between gap-3">
@@ -332,11 +371,24 @@ export default function WorkPage() {
                             <span className="shrink-0 text-xs font-bold text-primary">{formatEventTime(event)}</span>
                           </div>
                           <div className="mt-3 flex flex-wrap gap-2 items-center">
-                            {isAlreadyCreated ? (
-                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40">
-                                <span>등록 완료</span>
-                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                              </span>
+                            {linkedGoal ? (
+                              <>
+                                <Link
+                                  href={`/roadmaps/${linkedGoal.id}`}
+                                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40"
+                                >
+                                  <span>등록 완료</span>
+                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => regenerateRoadmapFromCalendar(event, linkedGoal)}
+                                  disabled={workingId === event.id}
+                                  className="rounded-lg border border-primary/30 px-3 py-2 text-xs font-bold text-primary transition hover:bg-primary/5 disabled:opacity-60"
+                                >
+                                  {workingId === event.id ? "다시 생성 중..." : "다시 생성"}
+                                </button>
+                              </>
                             ) : (
                               <button
                                 type="button"

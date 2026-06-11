@@ -63,7 +63,8 @@ export async function POST(request: Request) {
           create: roadmap.steps.map((step, index) => ({
             title: step.title,
             description: step.description,
-            estimateMinutes: step.estimateMinutes,
+            // 시간 추정은 사용하지 않지만 기존 DB 필수 컬럼에는 호환값을 저장합니다.
+            estimateMinutes: 1,
             order: index,
             status: index === 0 ? TaskStatus.ACTIVE : TaskStatus.LOCKED,
           })),

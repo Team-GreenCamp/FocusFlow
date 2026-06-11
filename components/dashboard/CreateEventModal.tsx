@@ -49,12 +49,12 @@ export default function CreateEventModal({
       <div className="bg-white dark:bg-[#191f28] p-6 md:p-8 rounded-[32px] w-full max-w-md border border-[#edf1f5] dark:border-neutral-800 shadow-2xl relative overflow-hidden transition-all duration-300">
         
         {/* 깨끗한 토스 데코레이션 블롭 */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[#22a063]/5 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[#00C896]/5 rounded-full blur-2xl pointer-events-none" />
 
         {/* Modal Header */}
         <div className="flex justify-between items-center border-b border-[#edf1f5] dark:border-neutral-800 pb-4 mb-6 relative z-10">
           <h3 className="font-headline-sm text-lg md:text-xl font-bold text-[#191f28] dark:text-white flex items-center gap-2.5">
-            <span className="material-symbols-outlined text-[#22a063] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="material-symbols-outlined text-[#00C896] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
               {isEditMode ? "edit_calendar" : "calendar_add_on"}
             </span>
             {isEditMode ? "구글 캘린더 일정 수정" : "구글 캘린더에 일정 등록"}
@@ -171,7 +171,7 @@ export default function CreateEventModal({
             <button
               type="submit"
               disabled={modalLoading}
-              className="flex-1 px-4 py-3 bg-[#22a063] text-white font-bold rounded-2xl text-sm shadow-md hover:bg-[#1a824e] hover:shadow-lg transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] duration-200 border-none"
+              className="flex-1 px-4 py-3 bg-[#00C896] text-white font-bold rounded-2xl text-sm shadow-md hover:bg-[#00a87e] hover:shadow-lg transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] duration-200 border-none"
             >
               {modalLoading ? (
                 <>

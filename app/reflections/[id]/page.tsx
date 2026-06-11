@@ -218,7 +218,7 @@ export default async function ReflectionDetailPage({ params }: Props) {
             href="/vault"
             className="w-full sm:w-auto border border-outline-variant text-on-surface bg-white/40 dark:bg-black/20 backdrop-blur-sm px-8 py-3.5 rounded-xl text-sm font-semibold hover:bg-surface-container-low transition-all text-center"
           >
-            회고 보관소로 이동
+            보관소로 이동
           </Link>
         </div>
       </main>

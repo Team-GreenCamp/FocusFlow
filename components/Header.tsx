@@ -11,7 +11,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 w-full z-50 bg-surface dark:bg-[#191f28]/95 shadow-sm border-b border-outline-variant dark:border-neutral-800 flex justify-between items-center px-6 md:px-margin-desktop h-16">
       <div className="flex items-center gap-4">
         <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">
-          FocusFlow
+          뚜잇
         </Link>
         <nav className="hidden md:flex gap-6 ml-8">
           <Link
@@ -42,15 +42,12 @@ export default function Header() {
                 : "text-on-surface-variant font-medium hover:bg-surface-container-low"
             }`}
           >
-            회고 보관소
+            보관소
           </Link>
         </nav>
       </div>
       <div className="flex items-center gap-6">
         <AuthButtons />
-        <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">
-          notifications
-        </span>
         <Link href="/settings" className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">
           settings
         </Link>

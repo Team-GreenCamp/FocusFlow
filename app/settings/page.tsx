@@ -93,11 +93,11 @@ export default function SettingsPage() {
             </h3>
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="flex-shrink-0">
-                <div className="w-24 h-24 rounded-full bg-[#f2f4f6] dark:bg-[#1d3528]/10 overflow-hidden border border-[#edf1f5] dark:border-[#22a063]/10">
+                <div className="w-24 h-24 rounded-full bg-[#f2f4f6] dark:bg-[#003d2a]/10 overflow-hidden border border-[#edf1f5] dark:border-[#00C896]/10">
                   <img
                     alt="User Profile Avatar"
                     className="w-full h-full object-cover"
-                    src={session?.user?.image ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(session?.user?.name ?? "User")}&background=22a063&color=fff`}
+                    src={session?.user?.image ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(session?.user?.name ?? "User")}&background=00C896&color=fff`}
                   />
                 </div>
               </div>
@@ -106,7 +106,7 @@ export default function SettingsPage() {
                   <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5">
                     이름
                   </span>
-                  <div className="w-full max-w-md bg-[#e9f7ef]/30 dark:bg-[#1d3528]/10 border border-[#22a063]/20 dark:border-[#22a063]/10 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
+                  <div className="w-full max-w-md bg-[#e0fdf4]/30 dark:bg-[#003d2a]/10 border border-[#00C896]/20 dark:border-[#00C896]/10 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
                     {session?.user?.name ?? "로그인 정보 없음"}
                   </div>
                 </div>
@@ -114,7 +114,7 @@ export default function SettingsPage() {
                   <span className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5">
                     이메일 주소
                   </span>
-                  <div className="w-full max-w-md bg-[#e9f7ef]/30 dark:bg-[#1d3528]/10 border border-[#22a063]/20 dark:border-[#22a063]/10 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
+                  <div className="w-full max-w-md bg-[#e0fdf4]/30 dark:bg-[#003d2a]/10 border border-[#00C896]/20 dark:border-[#00C896]/10 rounded-lg px-4 py-2.5 text-on-surface font-medium select-none">
                     {session?.user?.email ?? "계정 정보가 없습니다."}
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export default function SettingsPage() {
                   <h4 className="text-sm font-semibold text-on-surface">테마 설정</h4>
                   <p className="text-xs text-on-surface-variant mt-0.5">앱 화면 색상 테마</p>
                 </div>
-                <div className="flex border border-[#22a063]/20 dark:border-[#22a063]/10 rounded-lg overflow-hidden bg-[#e9f7ef]/50 dark:bg-[#1d3528]/20">
+                <div className="flex border border-[#00C896]/20 dark:border-[#00C896]/10 rounded-lg overflow-hidden bg-[#e0fdf4]/50 dark:bg-[#003d2a]/20">
                   <button
                     type="button"
                     onClick={() => setTheme("light")}
@@ -241,7 +241,7 @@ export default function SettingsPage() {
                     checked={soundEnabled}
                     onChange={(e) => setSoundEnabled(e.target.checked)}
                   />
-                  <div className="w-11 h-6 bg-neutral-200 dark:bg-[#1d3528]/30 rounded-full peer peer-focus:ring-2 peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-neutral-200 dark:bg-[#003d2a]/30 rounded-full peer peer-focus:ring-2 peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>

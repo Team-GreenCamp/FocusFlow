@@ -93,7 +93,7 @@ export default function BreakdownPage() {
                   </span>
                   <input
                     id="goal"
-                    className="w-full pl-12 pr-4 h-12 bg-white/70 dark:bg-surface-container-high/60 backdrop-blur-sm border border-primary/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:bg-[#e9f7ef]/10 focus:border-transparent font-body-medium text-body-medium text-on-surface"
+                    className="w-full pl-12 pr-4 h-12 bg-white/70 dark:bg-surface-container-high/60 backdrop-blur-sm border border-primary/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:bg-[#e0fdf4]/10 focus:border-transparent font-body-medium text-body-medium text-on-surface"
                     type="text"
                     value={goalInput}
                     onChange={(event) => setGoalInput(event.target.value)}
@@ -117,7 +117,7 @@ export default function BreakdownPage() {
                 </label>
                 <textarea
                   id="context"
-                  className="min-h-32 w-full resize-none rounded-xl border border-primary/30 bg-white/70 p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:bg-[#e9f7ef]/10"
+                  className="min-h-32 w-full resize-none rounded-xl border border-primary/30 bg-white/70 p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:bg-[#e0fdf4]/10"
                   value={contextInput}
                   onChange={(event) => setContextInput(event.target.value)}
                   placeholder="마감일, 현재 상태, 제약 조건, 원하는 결과물을 적으면 더 현실적인 업무 단위로 쪼갤 수 있습니다."

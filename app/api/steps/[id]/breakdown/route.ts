@@ -42,7 +42,8 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
           order: index,
           title: child.title,
           description: child.description,
-          estimateMinutes: child.estimateMinutes,
+          // 시간 추정은 사용하지 않지만 기존 DB 필수 컬럼에는 호환값을 저장합니다.
+          estimateMinutes: 1,
           status: index === 0 ? TaskStatus.ACTIVE : TaskStatus.LOCKED,
         })),
       });

@@ -520,7 +520,7 @@ export default function Home() {
       <Header />
 
       {/* Main Content Canvas */}
-      <main className="relative z-10 pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-7xl mx-auto w-full min-h-screen flex flex-col">
+      <main className="relative z-10 pt-24 px-margin-mobile md:px-gutter pb-28 md:pb-margin-desktop max-w-7xl mx-auto w-full min-h-screen flex flex-col">
         {loading ? (
           // ==================== [ 로딩 중 스켈레톤 UI ] ====================
           <div className="w-full flex-grow flex flex-col gap-6 py-12 animate-pulse">
@@ -542,16 +542,16 @@ export default function Home() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/10 pb-5">
               <div>
                 <h1 className="font-headline-lg text-3xl font-extrabold tracking-tight text-text-primary">
-                  {session?.user?.name ? `${session.user.name}님의 몰입 대시보드` : "나의 몰입 대시보드"}
+                  {session?.user?.name ? `${session.user.name}님의 대시보드` : "나의 대시보드"}
                 </h1>
                 <p className="text-text-secondary font-bold mt-1 text-sm">
-                  구글 캘린더 달력과 나의 몰입 업무를 유기적으로 한눈에 분석하고 실행하세요.
+                  구글 캘린더 달력과 나의 업무를 유기적으로 한눈에 분석하고 실행하세요.
                 </p>
               </div>
               <div className="flex gap-3">
                 <Link
                   href="/breakdown"
-                  className="px-5 py-2.5 bg-[#22a063] text-white font-extrabold rounded-2xl shadow-sm hover:bg-[#1a824e] hover:shadow-md transition-all text-sm flex items-center gap-2 hover:scale-[1.01] active:scale-95 duration-200 border-none"
+                  className="px-5 py-2.5 bg-[#00C896] text-white font-extrabold rounded-2xl shadow-sm hover:bg-[#00a87e] hover:shadow-md transition-all text-sm flex items-center gap-2 hover:scale-[1.01] active:scale-95 duration-200 border-none"
                 >
                   <span className="material-symbols-outlined text-sm font-bold">add</span>
                   업무 구체화하기
@@ -584,7 +584,7 @@ export default function Home() {
                 isRefreshing={isRefreshing}
               />
 
-              {/* 우측 (4열 배정): 선택 일정 타임라인 및 몰입 할일 목록 */}
+              {/* 우측 (4열 배정): 선택 일정 타임라인 및 할일 목록 */}
               <div className="lg:col-span-4 flex flex-col gap-6">
                 
                 {/* 1. 격리 추출된 선택 날짜의 구체적 일정 타임라인 컴포넌트 */}
@@ -597,7 +597,7 @@ export default function Home() {
                   onEditEvent={openEditEventModal}
                 />
 
-                {/* 2. 격리 추출된 몰입 할일 및 완료 진행율 종합 컴포넌트 */}
+                {/* 2. 격리 추출된 할일 및 완료 진행율 종합 컴포넌트 */}
                 <ActiveGoalSection
                   goals={filteredGoals}
                   allGoalsLength={goals.length}
@@ -617,11 +617,11 @@ export default function Home() {
             {/* Landing Hero Section */}
             <section className="w-full text-center py-16 md:py-24 flex flex-col items-center justify-center border-b border-outline-variant/20 mb-16 relative">
               <h1 className="font-display-lg text-4xl md:text-6xl font-bold tracking-tight text-on-surface max-w-3xl leading-tight mb-6 break-keep">
-                뇌의 인지 과부하를 비우고 <br />
-                <span className="momentum-gradient">몰입의 흐름</span>에 올라타세요
+                막막한 일도, <span className="momentum-gradient">뚜잇</span>하면 보인다
               </h1>
               <p className="text-on-surface-variant font-body-lg text-lg md:text-xl max-w-2xl leading-relaxed mb-10 break-keep">
-                복잡하고 막연한 머릿속 업무 아이디어를 즉시 실행 가능한 마이크로 태스크로 세분화합니다. 집중을 유지하고 일일 회고 루프를 완성하세요.
+                복잡한 생각을 실행 가능한 작은 할 일로 쪼개드려요.<br />
+                오늘 할 첫 번째 행동부터 시작하세요.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 items-center">
                 <Link
@@ -639,9 +639,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-primary text-2xl">psychology</span>
                 </div>
-                <h3 className="text-xl font-bold text-on-surface mb-3">인지 과부하 완화</h3>
+                <h3 className="text-xl font-bold text-on-surface mb-3">막막함 덜기</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed break-keep">
-                  추상적이고 막막한 목표를 논리적 순서를 갖춘 세부 태스크로 세분화하여, 시작 전 뇌의 의사결정 에너지를 절약합니다.
+                  막막한 목표를 작은 할 일로 나눠 바로 시작할 수 있게 도와드려요.
                 </p>
               </div>
 
@@ -649,9 +649,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-xl bg-secondary/15 flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-secondary text-2xl">bolt</span>
                 </div>
-                <h3 className="text-xl font-bold text-on-surface mb-3">몰입형 뽀모도로</h3>
+                <h3 className="text-xl font-bold text-on-surface mb-3">하나씩 집중하기</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed break-keep">
-                  한 번에 단 하나의 구체화된 업무에만 오롯이 몰입하도록 유도하며, 인지 상태를 최적으로 유지해주는 집중 타겟 가이드를 제공합니다.
+                  딱 하나만 고르고, 시간 재고, 뚜잇. 복잡한 생각은 잠시 내려두고 하나씩 끝내요.
                 </p>
               </div>
 
@@ -659,9 +659,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
                   <span className="material-symbols-outlined text-primary text-2xl">loop</span>
                 </div>
-                <h3 className="text-xl font-bold text-on-surface mb-3">피드백 기반 성장</h3>
+                <h3 className="text-xl font-bold text-on-surface mb-3">기록하고 이어가기</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed break-keep">
-                  실제 수행한 업무의 완수 내역과 단기 메모를 하나로 모아 심층 회고 피드백을 생성함으로써, 명확한 내일의 개선점을 제안합니다.
+                  끝낸 일은 기록으로 남기고, 다음 할 일은 더 쉽게 이어가요.
                 </p>
               </div>
             </section>

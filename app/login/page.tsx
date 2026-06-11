@@ -50,7 +50,7 @@ export default function LoginPage() {
       {/* 헤더 */}
       <header className="relative z-10 w-full px-6 md:px-margin-desktop h-16 flex items-center">
         <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">
-          FocusFlow
+          뚜잇
         </Link>
       </header>
 
@@ -58,7 +58,7 @@ export default function LoginPage() {
       <main className="relative z-10 flex-grow flex items-center justify-center px-4">
         <div className="glass-card w-full max-w-md p-8 rounded-2xl flex flex-col items-center text-center shadow-xl border border-outline-variant/30">
           <h1 className="font-display-md text-2xl md:text-3xl font-bold tracking-tight text-on-surface mb-3 break-keep">
-            FocusFlow에 오신 것을 환영합니다
+            뚜잇에 오신 것을 환영합니다
           </h1>
           <p className="text-on-surface-variant font-body-medium text-sm md:text-base leading-relaxed mb-8 max-w-sm break-keep">
             로그인하시면 AI 업무 구체화 설계 결과와 일일 회고 피드백을 영구적으로 저장하고 관리하실 수 있습니다.
@@ -111,7 +111,7 @@ export default function LoginPage() {
 
       {/* 푸터 */}
       <footer className="relative z-10 w-full py-6 text-center text-xs text-on-surface-variant/60">
-        © 2026 FocusFlow. All rights reserved.
+        © 2026 뚜잇. All rights reserved.
       </footer>
     </div>
   );

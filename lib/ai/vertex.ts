@@ -126,7 +126,7 @@ export async function generateDailyReflection(input: {
   if (shouldUseMock()) {
     return {
       markdown: [
-        "# 오늘의 FocusFlow 회고",
+        "# 오늘의 뚜잇 회고",
         "",
         "## 완료한 일",
         ...input.completedStepTitles.map((title) => `- ${title}`),

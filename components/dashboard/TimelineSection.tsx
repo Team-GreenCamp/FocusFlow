@@ -23,7 +23,7 @@ export default function TimelineSection({
   return (
     <div className="flex flex-col gap-3">
       <h3 className="font-headline-sm text-base font-bold text-[#191f28] flex items-center gap-1.5 pl-1">
-        <span className="material-symbols-outlined text-[#22a063] text-lg">event_available</span>
+        <span className="material-symbols-outlined text-[#00C896] text-lg">event_available</span>
         {formattedSelectedDate}
       </h3>
       
@@ -42,7 +42,7 @@ export default function TimelineSection({
               <div
                 key={event.id}
                 onClick={() => onEditEvent && onEditEvent(event)}
-                className="p-3.5 rounded-2xl bg-[#f9fafb] border border-[#edf1f5] hover:border-[#22a063]/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex flex-col gap-1 cursor-pointer"
+                className="p-3.5 rounded-2xl bg-[#f9fafb] border border-[#edf1f5] hover:border-[#00C896]/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex flex-col gap-1 cursor-pointer"
                 title="일정 상세 조율"
               >
                 <div className="flex items-start justify-between gap-1">
@@ -50,7 +50,7 @@ export default function TimelineSection({
                     {event.title}
                   </h5>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[9.5px] font-bold text-[#22a063] bg-[#e9f7ef] px-2.5 py-0.5 rounded-full">
+                    <span className="text-[9.5px] font-bold text-[#00C896] bg-[#e0fdf4] px-2.5 py-0.5 rounded-full">
                       {formatTime(event.start, event.allDay)}
                     </span>
                     <button
@@ -81,7 +81,7 @@ export default function TimelineSection({
           <span className="text-[#8b95a1] font-bold">일정 총 {selectedDateEvents.length}개</span>
           <button
             onClick={onOpenCreateModal}
-            className="text-[#22a063] hover:text-[#1a824e] font-extrabold flex items-center gap-0.5 transition-colors"
+            className="text-[#00C896] hover:text-[#00a87e] font-extrabold flex items-center gap-0.5 transition-colors"
             type="button"
           >
             내 캘린더에 일정 등록

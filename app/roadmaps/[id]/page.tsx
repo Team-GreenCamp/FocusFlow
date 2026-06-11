@@ -46,6 +46,9 @@ export default function RoadmapDetailPage() {
   const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({});
   const [showCompletedToday, setShowCompletedToday] = useState(false);
   const [stepMemos, setStepMemos] = useState<Record<string, string>>({});
+  const [isEditingGoal, setIsEditingGoal] = useState(false);
+  const [goalTitle, setGoalTitle] = useState("");
+  const [goalDescription, setGoalDescription] = useState("");
 
   const currentStep = useMemo(() => findCurrentWorkStep(goal), [goal]);
   const leafSteps = useMemo(() => goal?.steps.filter((step) => isLeaf(step, goal.steps)) ?? [], [goal]);
@@ -73,6 +76,8 @@ export default function RoadmapDetailPage() {
         const data = await callApi<{ goal: RoadmapGoal }>(`/api/roadmaps/${roadmapId}`);
         if (!ignore) {
           setGoal(data.goal);
+          setGoalTitle(data.goal.title);
+          setGoalDescription(data.goal.description ?? "");
         }
       } catch (requestError) {
         if (!ignore) {
@@ -191,6 +196,35 @@ export default function RoadmapDetailPage() {
     }
   }
 
+  async function updateGoal() {
+    if (!goal || !goalTitle.trim()) {
+      setError("목표 제목을 입력해 주세요.");
+      return;
+    }
+
+    setError("");
+    setLoading("update-goal");
+
+    try {
+      // 목표 정보만 수정하며 현재 단계 진행 상태는 그대로 유지합니다.
+      const data = await callApi<{ goal: RoadmapGoal }>(`/api/roadmaps/${goal.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          title: goalTitle.trim(),
+          description: goalDescription.trim(),
+        }),
+      });
+      setGoal(data.goal);
+      setGoalTitle(data.goal.title);
+      setGoalDescription(data.goal.description ?? "");
+      setIsEditingGoal(false);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "목표 수정에 실패했습니다.");
+    } finally {
+      setLoading("");
+    }
+  }
+
   return (
     <div className="bg-[#f2f4f6] dark:bg-[#121212] text-[#191f28] dark:text-[#f5f5f7] min-h-screen relative overflow-hidden">
       {/* Header */}
@@ -213,6 +247,13 @@ export default function RoadmapDetailPage() {
               </p>
             </div>
             <div className="flex gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsEditingGoal((prev) => !prev)}
+                className="rounded-lg border border-outline-variant bg-white/60 px-4 py-2 text-sm font-bold text-on-surface transition hover:bg-surface-container-low"
+              >
+                {isEditingGoal ? "수정 취소" : "목표 수정"}
+              </button>
               <Link
                 href="/breakdown"
                 className="rounded-lg border border-outline-variant bg-white/60 px-4 py-2 text-sm font-bold text-on-surface transition hover:bg-surface-container-low"
@@ -235,6 +276,45 @@ export default function RoadmapDetailPage() {
             <p className="rounded-md bg-error-container/20 border border-error/20 px-4 py-3 text-sm text-error font-medium">
               {error}
             </p>
+          )}
+
+          {goal && isEditingGoal && (
+            <div className="glass-card rounded-xl p-5 space-y-4">
+              <div>
+                <label htmlFor="goal-title" className="mb-2 block text-sm font-bold text-on-surface">
+                  목표 제목
+                </label>
+                <input
+                  id="goal-title"
+                  type="text"
+                  value={goalTitle}
+                  onChange={(event) => setGoalTitle(event.target.value)}
+                  className="h-11 w-full rounded-lg border border-outline-variant bg-white/70 px-3 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label htmlFor="goal-description" className="mb-2 block text-sm font-bold text-on-surface">
+                  목표 설명
+                </label>
+                <textarea
+                  id="goal-description"
+                  value={goalDescription}
+                  onChange={(event) => setGoalDescription(event.target.value)}
+                  className="min-h-28 w-full resize-none rounded-lg border border-outline-variant bg-white/70 p-3 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="목표의 맥락, 제약 조건, 원하는 결과를 입력해 주세요."
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={updateGoal}
+                  disabled={loading === "update-goal"}
+                  className="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-container hover:text-on-primary-container disabled:opacity-50"
+                >
+                  {loading === "update-goal" ? "저장 중..." : "수정 저장"}
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Simplified Progress and Completed List Toggle */}

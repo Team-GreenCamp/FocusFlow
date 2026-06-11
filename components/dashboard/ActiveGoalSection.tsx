@@ -24,8 +24,8 @@ export default function ActiveGoalSection({
   return (
     <div className="flex flex-col gap-3">
       <h3 className="font-headline-sm text-base font-bold text-[#191f28] flex items-center gap-1.5 pl-1">
-        <span className="material-symbols-outlined text-[#22a063] text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>task_alt</span>
-        목표 몰입 할일 ({goals.length}개)
+        <span className="material-symbols-outlined text-[#00C896] text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>task_alt</span>
+        목표 할일 ({goals.length}개)
       </h3>
 
       <div className="glass-card p-5 rounded-3xl border border-[#edf1f5] shadow-sm min-h-[180px] flex flex-col justify-between">
@@ -34,14 +34,14 @@ export default function ActiveGoalSection({
             <div className="flex-grow flex flex-col items-center justify-center text-center py-8">
               <span className="material-symbols-outlined text-[#8b95a1] text-3xl mb-2.5">task_alt</span>
               <p className="text-[#4e5968] text-xs break-keep leading-relaxed font-semibold">
-                진행 중인 몰입 목표가 없습니다.
+                진행 중인 목표가 없습니다.
               </p>
             </div>
           ) : goals.length === 0 ? (
             <div className="flex-grow flex flex-col items-center justify-center text-center py-8">
               <span className="material-symbols-outlined text-[#8b95a1] text-3xl mb-2.5">calendar_today</span>
               <p className="text-[#4e5968] text-xs break-keep leading-relaxed max-w-[210px] font-semibold">
-                선택하신 날짜에 연동된 몰입 목표 일정이 없습니다.
+                선택하신 날짜에 연동된 목표 일정이 없습니다.
               </p>
             </div>
           ) : (
@@ -57,7 +57,7 @@ export default function ActiveGoalSection({
               return (
                 <div
                   key={goal.id}
-                  className="p-4 rounded-2xl bg-[#f9fafb] border border-[#edf1f5] hover:border-[#22a063]/30 transition-all flex flex-col gap-3 relative overflow-hidden animate-fade-in"
+                  className="p-4 rounded-2xl bg-[#f9fafb] border border-[#edf1f5] hover:border-[#00C896]/30 transition-all flex flex-col gap-3 relative overflow-hidden animate-fade-in"
                 >
                   <div className="flex justify-between items-center gap-2 border-b border-[#edf1f5] pb-2">
                     <h4 className="font-bold text-sm text-[#191f28] truncate max-w-[60%]">
@@ -67,7 +67,7 @@ export default function ActiveGoalSection({
                     <div className="flex items-center gap-3">
                       <Link
                         href={`/roadmaps/${goal.id}#roadmap-list-section`}
-                        className="text-[10px] text-[#8b95a1] font-bold flex items-center gap-0.5 hover:text-[#22a063] hover:underline transition-colors"
+                        className="text-[10px] text-[#8b95a1] font-bold flex items-center gap-0.5 hover:text-[#00C896] hover:underline transition-colors"
                       >
                         상세
                         <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
@@ -89,11 +89,11 @@ export default function ActiveGoalSection({
                   <div className="space-y-1">
                     <div className="flex justify-between text-[10px] font-bold text-[#8b95a1]">
                       <span>완료율</span>
-                      <span className="text-[#22a063]">{progress}% ({completedLeaf.length}/{leafSteps.length})</span>
+                      <span className="text-[#00C896]">{progress}% ({completedLeaf.length}/{leafSteps.length})</span>
                     </div>
                     <div className="w-full h-1.5 bg-[#edf1f5] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-[#22a063] rounded-full transition-all duration-300"
+                        className="h-full bg-[#00C896] rounded-full transition-all duration-300"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -103,7 +103,7 @@ export default function ActiveGoalSection({
                   {activeStep && (
                     <div className="p-3 rounded-xl bg-white border border-[#edf1f5] flex items-center justify-between gap-3 shadow-sm">
                        <div className="space-y-0.5 min-w-0 flex-1">
-                        <span className="text-[8.5px] text-[#22a063] font-bold tracking-widest uppercase">
+                        <span className="text-[8.5px] text-[#00C896] font-bold tracking-widest uppercase">
                           NEXT
                         </span>
                         <h5 className="font-bold text-xs text-[#191f28] truncate">
@@ -115,8 +115,8 @@ export default function ActiveGoalSection({
                         {/* 중복 연동 가드 UI */}
                         {isDone ? null : isSynced ? (
                           <div
-                            title="구글 캘린더에 이미 연동된 몰입 업무입니다"
-                            className="p-1 px-2.5 bg-[#e9f7ef] text-[#22a063] rounded-lg text-[9.5px] font-bold flex items-center gap-0.5 select-none shrink-0"
+                            title="구글 캘린더에 이미 연동된 업무입니다"
+                            className="p-1 px-2.5 bg-[#e0fdf4] text-[#00C896] rounded-lg text-[9.5px] font-bold flex items-center gap-0.5 select-none shrink-0"
                           >
                             <span className="material-symbols-outlined text-[12px] font-bold" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
                             등록됨
@@ -125,7 +125,7 @@ export default function ActiveGoalSection({
                           <button
                             onClick={() => onOpenTaskSyncModal(goal.title, activeStep)}
                             title="이 업무를 내 달력 일정에 추가하기"
-                            className="p-1.5 bg-[#f2f4f6] border-none text-[#4e5968] hover:text-[#22a063] hover:bg-[#e9f7ef] rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center shrink-0"
+                            className="p-1.5 bg-[#f2f4f6] border-none text-[#4e5968] hover:text-[#00C896] hover:bg-[#e0fdf4] rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center shrink-0"
                             type="button"
                           >
                             <span className="material-symbols-outlined text-[15px]">calendar_add_on</span>
@@ -134,10 +134,10 @@ export default function ActiveGoalSection({
 
                         <Link
                           href="/deep-work"
-                          className="px-3 py-1.5 bg-[#22a063] text-white font-bold rounded-xl text-[10px] shadow hover:bg-[#1a824e] hover:shadow-md transition-all flex items-center gap-0.5 shrink-0"
+                          className="px-3 py-1.5 bg-[#00C896] text-white font-bold rounded-xl text-[10px] shadow hover:bg-[#00a87e] hover:shadow-md transition-all flex items-center gap-0.5 shrink-0"
                         >
                           <span className="material-symbols-outlined text-[11px] font-bold">bolt</span>
-                          집중
+                          실행
                         </Link>
                       </div>
                     </div>

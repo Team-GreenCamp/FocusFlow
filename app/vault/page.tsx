@@ -130,9 +130,12 @@ export default function VaultPage() {
 
       <main className="pt-24 px-margin-mobile md:px-gutter pb-margin-desktop max-w-3xl mx-auto w-full min-h-screen">
         <header className="mb-10">
-          <h2 className="font-display-lg text-display-lg-mobile md:text-headline-lg text-on-surface mb-2">
-            회고 보관소
-          </h2>
+          <span className="text-primary font-bold font-label-md text-label-md tracking-widest uppercase">
+            Vault Overview
+          </span>
+          <h1 className="font-headline-lg text-headline-lg font-extrabold tracking-tight text-[#191f28] dark:text-[#f5f5f7] mt-1 mb-2">
+            보관소
+          </h1>
           <p className="text-on-surface-variant font-body-lg text-body-lg">
             실제 DB에 저장된 업무 분석과 회고 피드백을 관리하세요.
           </p>
@@ -200,7 +203,7 @@ export default function VaultPage() {
                       return (
                         <div
                           key={goal.id}
-                          className="bg-[#e9f7ef]/50 dark:bg-[#1d3528]/30 rounded-2xl p-6 border border-[#22a063]/20 dark:border-[#22a063]/10 hover:border-primary/50 transition-colors shadow-sm"
+                          className="bg-[#e0fdf4]/50 dark:bg-[#003d2a]/30 rounded-2xl p-6 border border-[#00C896]/20 dark:border-[#00C896]/10 hover:border-primary/50 transition-colors shadow-sm"
                         >
                           <div className="flex justify-between items-start gap-4 mb-3">
                             <div>
@@ -209,7 +212,7 @@ export default function VaultPage() {
                               </span>
                               <h4 className="font-bold text-lg mt-2 text-on-surface">{goal.title}</h4>
                             </div>
-                            <span className="text-xs text-primary dark:text-[#a6e3bd] bg-[#e9f7ef] dark:bg-[#1d3528]/50 px-2.5 py-1 rounded-lg font-bold border border-[#22a063]/20 dark:border-[#22a063]/10">
+                             <span className="text-xs text-primary dark:text-[#6ff0cf] bg-[#e0fdf4] dark:bg-[#003d2a]/50 px-2.5 py-1 rounded-lg font-bold border border-[#00C896]/20 dark:border-[#00C896]/10">
                               {goal.steps.length}단계
                             </span>
                           </div>
@@ -226,22 +229,11 @@ export default function VaultPage() {
                             <span>전체 {goal.steps.length}단계 중 {completed}단계 완료</span>
                             <Link href={`/roadmaps/${goal.id}`} className="text-primary hover:underline flex items-center gap-1 font-bold">
                               <span className="material-symbols-outlined text-[14px]">autorenew</span>
-                              다시 검토
-                            </Link>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </section>
-            )}
-
-            {(activeTab === "resources" || activeTab === "bookmarked") && (
+                                {(activeTab === "resources" || activeTab === "bookmarked") && (
               <section className="flex flex-col gap-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="material-symbols-outlined text-secondary">rate_review</span>
-                  <h3 className="font-headline-md text-headline-md text-on-surface">저장된 회고 피드백</h3>
+                <div className="flex items-center gap-2 mb-1.5 pl-1">
+                  <span className="material-symbols-outlined text-secondary text-xl md:text-2xl">rate_review</span>
+                  <h3 className="font-bold text-lg md:text-xl text-on-surface">저장된 회고 피드백</h3>
                 </div>
 
                 {filteredReflections.length === 0 ? (
@@ -257,7 +249,7 @@ export default function VaultPage() {
                       return (
                         <article
                           key={reflection.id}
-                          className="bg-[#e9f7ef]/50 dark:bg-[#1d3528]/30 rounded-2xl p-6 border border-[#22a063]/20 dark:border-[#22a063]/10 hover:border-secondary/50 transition-colors shadow-sm"
+                          className="bg-[#e0fdf4]/50 dark:bg-[#003d2a]/30 rounded-2xl p-6 border border-[#00C896]/20 dark:border-[#00C896]/10 hover:border-secondary/50 transition-colors shadow-sm"
                         >
                           <div className="flex justify-between items-start mb-2 gap-4">
                             <div>
@@ -295,12 +287,12 @@ export default function VaultPage() {
                                 return (
                                   <div
                                     key={idx}
-                                    className={`relative overflow-hidden rounded-xl border ${style.border} ${style.bg} p-4 transition-all duration-300`}
+                                    className={`relative overflow-hidden rounded-xl border ${style.border} ${style.bg} py-2.5 px-3.5 md:p-4 transition-all duration-300`}
                                   >
                                     <div className={`absolute left-0 top-0 bottom-0 w-1 ${style.accentLine}`} />
                                     
-                                    <div className="flex items-center gap-2 mb-2 pl-1">
-                                      <span className={`material-symbols-outlined ${style.iconColor} text-[18px]`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                                    <div className="flex items-center gap-2 mb-1.5 pl-1">
+                                      <span className={`material-symbols-outlined ${style.iconColor} text-base md:text-[18px]`} style={{ fontVariationSettings: "'FILL' 1" }}>
                                         {style.icon}
                                       </span>
                                       <h5 className="font-bold text-on-surface text-xs md:text-sm">
@@ -311,11 +303,20 @@ export default function VaultPage() {
                                     {section.items.length === 0 ? (
                                       <p className="text-xs text-on-surface-variant pl-6">기록된 항목이 없습니다.</p>
                                     ) : (
-                                      <ul className="space-y-1.5 pl-1">
+                                      <ul className="space-y-1 pl-1">
                                         {section.items.map((item, itemIdx) => (
-                                          <li key={itemIdx} className="flex items-start gap-2 text-xs text-on-surface-variant leading-relaxed">
+                                          <li key={itemIdx} className="flex items-start gap-2 text-[11px] md:text-xs text-on-surface-variant leading-normal md:leading-relaxed">
                                             <span className={`${style.iconColor} text-[10px] mt-1 shrink-0`}>•</span>
                                             <span>{item}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>{item}</span>
                                           </li>
                                         ))}
                                       </ul>
